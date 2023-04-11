@@ -1,0 +1,8 @@
+# Purpur Tentakel
+# 21.01.2022
+# VereinsManager // requirements
+
+PyQt5
+reportlab
+bcrypt
+pytest
