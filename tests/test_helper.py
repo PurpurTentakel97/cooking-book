@@ -25,13 +25,9 @@ def generate_temporary_database() -> None:
 
 def _add_raw_types_to_database() -> None:
     entries: list[str] = [
-        "Abendessen",
-        "Mittagessen",
         "Frühstück",
-        "Buffet",
-        "Salat",
-        "Nachtisch",
-        "Suppe"
+        "Mittagessen",
+        "Abendessen",
     ]
 
     for value in entries:
