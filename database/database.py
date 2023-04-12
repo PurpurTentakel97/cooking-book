@@ -22,8 +22,10 @@ class Database:
         # generate connection
         dirs.check_and_make_dir(dirs.DirType.DATABASE)
 
-        self.connection = sqlite3.connect(
-            os.path.join(dirs.get_dir_from_file(dirs.FileType.DATABASE), dirs.FileType.DATABASE.value))
+        my_path = os.path.join(dirs.get_dir_from_file(dirs.FileType.DATABASE), dirs.FileType.DATABASE.value)
+        if not os.path.exists(my_path):
+            log.message(log.LogType.GENERATED, "database.py", "self.__init__()", "generated new database")
+        self.connection = sqlite3.connect(my_path)
 
         self.connection.execute("PRAGMA foreign_keys = ON")
         self.cursor = self.connection.cursor()

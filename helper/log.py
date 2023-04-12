@@ -14,19 +14,19 @@ import json
 
 # @formatter:off
 class LogType(Enum):
-    DEBUG =           "DEBUG             "
-    INFO =            "INFO              "
+    DEBUG =            "DEBUG             "
+    INFO =             "INFO              "
 
-    SAVED =           "SAVED             "
-    LOADED =          "LOADED            "
-    GENERATED =       "GENERATED         "
-    INITIALIZED =     "INITIALIZED       "
+    SAVED =            "SAVED             "
+    LOADED =           "LOADED            "
+    GENERATED =        "GENERATED         "
+    INITIALIZED =      "INITIALIZED       "
 
-    INVALID_ARGUMENT = "INVALID ARGUMENT "
+    INVALID_ARGUMENT = "INVALID ARGUMENT  "
 
-    BREAKING_ERROR =  "[[ERROR BREAKING]]"
-    ERROR =           "[ERROR]           "
-    EXPECTED_ERROR =  "ERROR EXPECTED    "
+    BREAKING_ERROR =   "[[ERROR BREAKING]]"
+    ERROR =            "[ERROR]           "
+    EXPECTED_ERROR =   "ERROR EXPECTED    "
 # @formatter:on
 
 
@@ -67,7 +67,7 @@ def _create_log_file() -> None:
 
     log_dir_name: str = dirs.get_dir_from_file(dirs.FileType.LOG_ENDING)
     _log_file_name = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-    _log_file_name = f"{log_dir_name}/{_log_file_name}{dirs.FileType.LOG_ENDING.value}"
+    _log_file_name = f"{log_dir_name}\\{_log_file_name}{dirs.FileType.LOG_ENDING.value}"
 
     with open(_log_file_name, "w") as _:
         var = None
@@ -80,6 +80,11 @@ def message(log_type: LogType, file: str, function: str, text: str) -> None:
     print(log)
     _logs.append(log)
     export()
+
+
+def error(log_type: LogType, file: str, function: str, error_tuple: tuple) -> None:
+    error_str: str = f"{error_tuple[0]} | {error_tuple[1]} | {error_tuple[2]}"
+    message(log_type, file, function, error_str)
 
 
 def export(printing: bool = False) -> None:

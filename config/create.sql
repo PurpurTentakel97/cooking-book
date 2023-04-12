@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS "main"."raw_types"(
 "ID" INTEGER NOT NULL UNIQUE,
 "_created" INTEGER DEFAULT (CAST(strftime('%s', 'now') AS INTEGER)),
 "_updated" INTEGER DEFAULT (CAST(strftime('%s', 'now') AS INTEGER)),
-"type" VARCHAR NOT NULL UNIQUE,
+"type" TEXT NOT NULL UNIQUE,
 PRIMARY KEY ("ID" AUTOINCREMENT)
 );
 /* Trigger */
@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS "main"."recipes"(
 "ID" INTEGER NOT NULL UNIQUE,
 "_created" INTEGER DEFAULT (CAST(strftime('%s', 'now') AS INTEGER)),
 "_updated" INTEGER DEFAULT (CAST(strftime('%s', 'now') AS INTEGER)),
-"title" VARCHAR NOT NULL UNIQUE,
-"description" VARCHAR NOT NULL,
+"title" TEXT NOT NULL UNIQUE,
+"description" TEXT NOT NULL,
 PRIMARY KEY ("ID" AUTOINCREMENT)
 );
 /* Trigger */
@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS "main"."ingredients"(
 "_updated" INTEGER DEFAULT (CAST(strftime('%s', 'now') AS INTEGER)),
 "recipe_id" INTEGER NOT NULL,
 "amount" INTEGER NOT NULL,
-"unit" VARCHAR,
-"ingredient" VARCHAR NOT NULL,
+"unit" TEXT,
+"ingredient" TEXT NOT NULL,
 PRIMARY KEY ("ID" AUTOINCREMENT),
 FOREIGN KEY ("recipe_id") REFERENCES "recipes"
 );

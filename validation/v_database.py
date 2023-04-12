@@ -9,15 +9,16 @@ from database import select
 from helper import return_message as r_m
 
 
+# raw type
 def add_raw_type(name: str) -> bool:
-    result: r_m.ReturnMessage = select.select_all_raw_types()
-    if not type(result.entry) == tuple():
-        log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "add_raw_type()",
-                    "invalid datatype. should be tuple.")
-        return False
+    result: r_m.ReturnMessage = select.select.select_all_raw_types()
+    if not result.valid:
+        log.message(log.LogType.INFO, "v_database.py", "add_raw_type()", "ResultMassage not valid")
 
-    if name in result.entry:
-        log.message(log.LogType.INFO, "v_database.py", "add_raw_type()", "raw type is already existing.")
-        return False
+    for _, raw_type in result.entry:
+        if name == raw_type:
+            log.message(log.LogType.INFO, "v_database.py", "add_raw_type()",
+                        f"raw type is already existing -> {raw_type}")
+            return False
 
     return True
