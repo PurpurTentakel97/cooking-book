@@ -8,6 +8,7 @@
 from helper import init
 from database import add as a
 from database import update as u
+from database import delete as d
 
 if __name__ == "__main__":
     init.init()
@@ -19,3 +20,6 @@ if __name__ == "__main__":
     u.update.update_raw_type_by_ID(1, "Nachtisch")
     u.update.update_raw_type_by_name("Mittagessen", "Nachtisch")
     u.update.update_raw_type_by_name("Mittagessen", "Braten")
+
+    d.delete.delete_raw_type_by_ID(1)
+    d.delete.delete_raw_type_by_name("Abendessen")

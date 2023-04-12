@@ -65,3 +65,34 @@ def update_raw_type_by_name(old_type: str, new_type: str) -> bool:
     log.message(log.LogType.INFO, "v_database.py", "update_raw_type_by_name()",
                 f"update old raw type not found -> {old_type}")
     return False
+
+
+def delete_raw_type_by_ID(ID: int) -> bool:
+    result: r_m.ReturnMessage = select.select.select_all_raw_types()
+    if not result.valid:
+        log.message(log.LogType.INFO, "v_database.py", "delete_raw_type_by_ID()", "ResultMassage not valid")
+        return False
+
+    for old_ID, _ in result.entry:
+        if old_ID == ID:
+            return True
+
+    log.message(log.LogType.INFO, "v_database.py", "delete_raw_type_by_ID()",
+                f"not entry ID found to delete -> {ID}")
+    return False
+
+
+def delete_raw_type_by_name(value: str) -> bool:
+    result: r_m.ReturnMessage = select.select.select_all_raw_types()
+    if not result.valid:
+        log.message(log.LogType.INFO, "v_database.py", "delete_raw_type_by_ID()", "ResultMassage not valid")
+        return False
+
+    for _, old_value in result.entry:
+        if old_value == value:
+            return True
+
+    log.message(log.LogType.INFO, "v_database.py", "delete_raw_type_by_ID()",
+                f"not entry value found to delete -> {value}")
+    return False
+# /raw types
