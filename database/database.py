@@ -19,12 +19,16 @@ class Database:
         self.OperationalError = sqlite3.OperationalError
         self.IntegrityError = sqlite3.IntegrityError
 
-        self.create_cursor_connection()
-        self._create_tables()
+        # generate connection
+        dirs.check_and_make_dir(dirs.DirType.DATABASE)
 
-        log.message(log.LogType.INITIALIZED, "database.py", "self.__init__()", "databased initialized")
+        self.connection = sqlite3.connect(
+            os.path.join(dirs.get_dir_from_file(dirs.FileType.DATABASE), dirs.FileType.DATABASE.value))
 
-    def _create_tables(self) -> None:
+        self.connection.execute("PRAGMA foreign_keys = ON")
+        self.cursor = self.connection.cursor()
+
+        # generate tables
         with open(
                 os.path.join(dirs.get_dir_from_enum(dirs.DirType.CONFIG), dirs.FileType.DATABASE_CONFIG.value)) as file:
             try:
@@ -34,14 +38,7 @@ class Database:
 
         self.connection.commit()
 
-    def create_cursor_connection(self) -> None:
-        dirs.check_and_make_dir(dirs.DirType.DATABASE)
-
-        self.connection = sqlite3.connect(
-            os.path.join(dirs.get_dir_from_file(dirs.FileType.DATABASE), dirs.FileType.DATABASE.value))
-
-        self.connection.execute("PRAGMA foreign_keys = ON")
-        self.cursor = self.connection.cursor()
+        log.message(log.LogType.INITIALIZED, "database.py", "self.__init__()", "databased initialized")
 
     def drop_connection(self) -> None:
         self.connection.close()
