@@ -4,9 +4,9 @@
 # 12.04.2023
 #
 
-import sqlite3
 import os
 import sys
+import sqlite3
 
 from helper import log
 from helper import dirs
