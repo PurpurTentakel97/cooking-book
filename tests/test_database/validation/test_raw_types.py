@@ -25,9 +25,9 @@ def test_select_raw_type_by_ID(ID, expected) -> None:
     ("Mittagessen", True),
     ("Nachtisch", False)  # value not existing
 ])
-def test_select_raw_type_by_name(value, expected) -> None:
+def test_select_raw_type_ID_by_name(value, expected) -> None:
     t_h.generate_temporary_database()
-    v_d.select_raw_type_by_name(value)
+    v_d.select_raw_type_ID_by_name(value)
     t_h.delete_temporary_database()
 
 

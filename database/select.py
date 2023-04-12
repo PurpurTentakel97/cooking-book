@@ -9,6 +9,7 @@ import sys
 from helper import log
 from database.database import Database
 from helper import return_message as r_m
+from validation import v_database as v_d
 
 select: "Select"
 
@@ -29,22 +30,28 @@ class Select:
             return r_m.ReturnMessageStr(f"could not load all raw types.", False)
 
     def select_raw_type_by_ID(self, ID: int) -> r_m.ReturnMessage:
+        if not v_d.select_raw_type_by_ID(ID):
+            return r_m.ReturnMessageStr("no valid arguments for select raw type", False)
+
         sql_command: str = f"""SELECT type FROM raw_types WHERE ID = ?;"""
         try:
-            result: str = self.db.cursor.execute(sql_command, ID).fetchone()
+            result: str = self.db.cursor.execute(sql_command, (ID,)).fetchone()[0]
             log.message(log.LogType.LOADED, "select.py", "select_raw_type_by_ID()", f"selected ID {ID} -> {result}")
             return r_m.ReturnMessageStr(result, True)
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "select.py", "select_raw_type_by_ID()", sys.exc_info())
             return r_m.ReturnMessageStr(f"could not load raw type with ID {ID}", False)
 
-    def select_raw_type_by_name(self, value: str) -> r_m.ReturnMessage:
-        sql_command: str = f"""SELECT type FROM raw_types WHERE raw_type = ?;"""
+    def select_raw_type_ID_by_name(self, value: str) -> r_m.ReturnMessage:
+        if not v_d.select_raw_type_ID_by_name(value):
+            return r_m.ReturnMessageStr("no valid arguments for select raw type", False)
+
+        sql_command: str = f"""SELECT ID FROM raw_types WHERE type = ?;"""
         try:
-            result: str = self.db.cursor.execute(sql_command, value).fetchone()
+            result: int = self.db.cursor.execute(sql_command, (value,)).fetchone()[0]
             log.message(log.LogType.LOADED, "select.py", "select_raw_type_by_name()",
                         f"selected name {value} -> {result}")
-            return r_m.ReturnMessageStr(result, True)
+            return r_m.ReturnMessageInt(result, True)
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "select.py", "select_raw_type_by_name()", sys.exc_info())
             return r_m.ReturnMessageStr(f"could not load raw type with ID {value}", False)

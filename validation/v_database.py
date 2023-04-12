@@ -25,7 +25,7 @@ def select_raw_type_by_ID(ID: int) -> bool:
     return False
 
 
-def select_raw_type_by_name(value: str) -> bool:
+def select_raw_type_ID_by_name(value: str) -> bool:
     result: r_m.ReturnMessage = s.select.select_all_raw_types()
     if not result.valid:
         log.message(log.LogType.INFO, "v_database.py", "select_raw_type_by_name()", "ReturnMessage not valid")

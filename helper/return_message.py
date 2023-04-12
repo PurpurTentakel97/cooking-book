@@ -22,6 +22,12 @@ class ReturnMessageStr(ReturnMessage):
         self.entry: str = entry
 
 
+class ReturnMessageInt(ReturnMessage):
+    def __init__(self, entry: int, valid: bool):
+        super().__init__(valid)
+        self.entry = entry
+
+
 class ReturnMessageTuple(ReturnMessage):
     def __init__(self, entry: tuple, valid: bool):
         super().__init__(valid)
