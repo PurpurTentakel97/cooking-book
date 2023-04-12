@@ -11,7 +11,7 @@ from database import update as u
 from database import delete as d
 
 if __name__ == "__main__":
-    init.init()
+    init.init(test=False)
 
     a.add.add_raw_type("Frühstück")
     a.add.add_raw_type("Mittagessen")

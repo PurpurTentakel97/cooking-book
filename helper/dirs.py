@@ -12,15 +12,17 @@ from helper import log
 
 # @formatter:off
 class DirType(Enum):
-    SAVES =    "saves"
-    LOGS =     "logs"
-    DATABASE = "database"
-    CONFIG =   "config"
+    SAVES =         "saves"
+    LOGS =          "logs"
+    DATABASE =      "database"
+    TEST_DATABASE = "test_database"
+    CONFIG =        "config"
 
 
 class FileType(Enum):
     LOG_ENDING =      ".CB_LOG"
     DATABASE =        "recipes.CB_DB"
+    TEST_DATABASE =   "test_database.CB_DB"
     DATABASE_CONFIG = "create.sql"
 # @formatter:on
 
@@ -33,6 +35,8 @@ def get_dir_from_enum(path_type: DirType) -> str:
             return os.path.join(os.getcwd(), DirType.SAVES.value, DirType.LOGS.value)
         case DirType.DATABASE:
             return os.path.join(os.getcwd(), DirType.SAVES.value, DirType.DATABASE.value)
+        case DirType.TEST_DATABASE:
+            return os.path.join(os.getcwd(),DirType.SAVES.value, DirType.TEST_DATABASE.value)
         case DirType.CONFIG:
             return os.path.join(os.getcwd(), DirType.CONFIG.value)
 
@@ -62,3 +66,5 @@ def get_dir_from_file(file_type: FileType) -> str:
             return get_dir_from_enum(DirType.LOGS)
         case FileType.DATABASE:
             return get_dir_from_enum(DirType.DATABASE)
+        case FileType.TEST_DATABASE:
+            return get_dir_from_enum(DirType.TEST_DATABASE)

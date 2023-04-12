@@ -15,14 +15,19 @@ database: "Database"
 
 
 class Database:
-    def __init__(self):
+    def __init__(self, test: bool):
         self.OperationalError = sqlite3.OperationalError
         self.IntegrityError = sqlite3.IntegrityError
 
         # generate connection
-        dirs.check_and_make_dir(dirs.DirType.DATABASE)
+        if not test:
+            dirs.check_and_make_dir(dirs.DirType.DATABASE)
+            my_path = os.path.join(dirs.get_dir_from_file(dirs.FileType.DATABASE), dirs.FileType.DATABASE.value)
+        else:
+            dirs.check_and_make_dir(dirs.DirType.TEST_DATABASE)
+            my_path = os.path.join(dirs.get_dir_from_file(dirs.FileType.TEST_DATABASE),
+                                   dirs.FileType.TEST_DATABASE.value)
 
-        my_path = os.path.join(dirs.get_dir_from_file(dirs.FileType.DATABASE), dirs.FileType.DATABASE.value)
         if not os.path.exists(my_path):
             log.message(log.LogType.GENERATED, "database.py", "self.__init__()", "generated new database")
         self.connection = sqlite3.connect(my_path)
@@ -31,8 +36,8 @@ class Database:
         self.cursor = self.connection.cursor()
 
         # generate tables
-        with open(
-                os.path.join(dirs.get_dir_from_enum(dirs.DirType.CONFIG), dirs.FileType.DATABASE_CONFIG.value)) as file:
+        file = os.path.join(dirs.get_dir_from_enum(dirs.DirType.CONFIG), dirs.FileType.DATABASE_CONFIG.value)
+        with open(file) as file:
             try:
                 self.cursor.executescript(file.read())
             except self.OperationalError:
@@ -46,6 +51,6 @@ class Database:
         self.connection.close()
 
 
-def create_database() -> None:
+def create_database(test: bool) -> None:
     global database
-    database = Database()
+    database = Database(test)

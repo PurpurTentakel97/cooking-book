@@ -11,8 +11,8 @@ from database import update
 from database import delete
 
 
-def init():
-    database.create_database()
+def init(test: bool):
+    database.create_database(test)
     add.create_add(database.database)
     select.create_select(database.database)
     update.create_update(database.database)
