@@ -38,16 +38,16 @@ class Select:
             log.error(log.LogType.ERROR, "select.py", "select_raw_type_by_ID()", sys.exc_info())
             return r_m.ReturnMessageStr(f"could not load raw type with ID {ID}", False)
 
-    def select_raw_type_by_name(self, name: str) -> r_m.ReturnMessage:
+    def select_raw_type_by_name(self, value: str) -> r_m.ReturnMessage:
         sql_command: str = f"""SELECT type FROM raw_types WHERE raw_type = ?;"""
         try:
-            result: str = self.db.cursor.execute(sql_command, name).fetchone()
+            result: str = self.db.cursor.execute(sql_command, value).fetchone()
             log.message(log.LogType.LOADED, "select.py", "select_raw_type_by_name()",
-                        f"selected name {name} -> {result}")
+                        f"selected name {value} -> {result}")
             return r_m.ReturnMessageStr(result, True)
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "select.py", "select_raw_type_by_name()", sys.exc_info())
-            return r_m.ReturnMessageStr(f"could not load raw type with ID {name}", False)
+            return r_m.ReturnMessageStr(f"could not load raw type with ID {value}", False)
 
 
 def create_select(db: Database):

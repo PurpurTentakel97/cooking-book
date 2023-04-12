@@ -19,6 +19,8 @@ class LogType(Enum):
 
     SAVED =            "SAVED             "
     LOADED =           "LOADED            "
+    UPDATED =          "UPDATED           "
+    DELETED =          "DELETED           "
     GENERATED =        "GENERATED         "
     INITIALIZED =      "INITIALIZED       "
 
