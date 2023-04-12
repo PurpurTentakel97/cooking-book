@@ -5,8 +5,14 @@
 # 11.04.2023
 #
 
-import helper.log as log
-import helper.dirs as dirs
+from helper import log
+import time
 
 if __name__ == "__main__":
-    dirs.check_and_make_dir(dirs.DirType.LOGS)
+    log.message(log.LogType.INFO, "main.py", "__name__ == __main__()", "info text")
+    time.sleep(2)
+    log.message(log.LogType.INFO, "main.py", "__name__ == __main__()", "info text")
+    time.sleep(2)
+    log.message(log.LogType.INFO, "main.py", "__name__ == __main__()", "info text")
+
+    log.export()

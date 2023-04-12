@@ -3,9 +3,13 @@
 # Cocking Book
 # 12.04.2023
 #
-
+import os.path
 from enum import Enum
 from datetime import datetime
+from typing import TextIO
+
+from helper import dirs
+import json
 
 
 # @formatter:off
@@ -15,6 +19,7 @@ class LogType(Enum):
 
     SAVED =           "SAVED             ",
     LOADED =          "LOADED            ",
+    GENERATED =       "GENERATED         ",
 
     INVALID_ARGUMENT = "INVALID ARGUMENT "
 
@@ -23,29 +28,76 @@ class LogType(Enum):
     EXPECTED_ERROR =  "ERROR EXPECTED    ",
 # @formatter:on
 
+
 class _Log:
     def __init__(self, log_type: LogType, file: str, function: str, text: str):
+        self.timestamp: datetime = datetime.now()
         self.log_type: LogType = log_type
         self.file: str = file
         self.function: str = function
         self.text: str = text
-        self.timestamp: datetime = datetime.now()
 
     def __str__(self):
-        date: str = self.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-        return f"[{date}] | {self.log_type.value[0]} | {self.file}.{self.function} | {self.text}"
+        return f"[{self.date_as_string()}] | {self.log_type.value[0]} | {self.file}.{self.function} | {self.text}"
+
+    def date_as_string(self):
+        return self.timestamp.strftime("%d-%m-%Y %H:%M:%S")
+
+    def as_dict(self) -> dict[str, str]:
+        return {
+            "date": self.date_as_string(),
+            "log type": self.log_type.value[0].strip(),
+            "file": self.file,
+            "function": self.function,
+            "text": self.text
+        }
 
 
 _logs: list[_Log, ...] = list()
+_log_file_name: str = ""
+
+
+def _create_log_file() -> None:
+    dirs.check_and_make_dir(dirs.DirType.LOGS)
+
+    global _log_file_name
+    if os.path.exists(_log_file_name):
+        return
+
+    log_dir_name: str = dirs.get_dir_from_file(dirs.FileType.LOG)
+    _log_file_name = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
+    _log_file_name = f"{log_dir_name}/{_log_file_name}{dirs.FileType.LOG.value}"
+
+    with open(_log_file_name, "w") as _:
+        var = None
+        message(LogType.GENERATED, "log.py", "_create_log_file()", f"generated file '{_log_file_name}'")
 
 
 def message(log_type: LogType, file: str, function: str, text: str) -> None:
-    log: _Log = _Log(log_type, file, function, text)
-    _logs.append(log)
+    log: _Log = _Log(log_type, file, function, text.strip())
+
     print(log)
+    _logs.append(log)
+    export()
 
 
-def export() -> None:  # @todo actually export the log
+
+def export(printing: bool = False) -> None:
+    out: list[dict[str, str]] = list()
+    global _log_file_name
+    if len(_log_file_name) == 0:
+        _create_log_file()
+
     for log in _logs:
         log: _Log
-        print(log)
+
+        out.append(log.as_dict())
+
+    out: str = json.dumps(out, indent=4)
+
+    if os.path.exists(_log_file_name):
+        with open(_log_file_name, "w") as file:
+            file.write(out)
+
+    if printing:
+        print(out)

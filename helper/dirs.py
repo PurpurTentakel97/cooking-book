@@ -7,7 +7,7 @@
 import os
 from enum import Enum
 
-import helper.log as log
+from helper import log
 
 
 class DirType(Enum):
@@ -16,7 +16,7 @@ class DirType(Enum):
 
 
 class FileType(Enum):
-    LOG = ".log"
+    LOG = ".CB_LOG"
 
 
 def _get_dir_from_enum(path_type: DirType) -> str:
@@ -27,21 +27,26 @@ def _get_dir_from_enum(path_type: DirType) -> str:
             return f"{DirType.SAVES.value}/{DirType.LOGS.value}"
 
 
-def _crate_dir(my_path: str) -> bool:
-
+def _create_dir(my_path: str) -> bool:
     if os.path.exists(my_path):
         return True
 
     os.makedirs(my_path)
 
     if os.path.exists(my_path):
-        log.message(log.LogType.INFO, "dirs.py", "_create_dir", f"generated path \"{my_path}\"")
+        log.message(log.LogType.GENERATED, "dirs.py", "_create_dir()", f"generated path '{my_path}'")
         return True
     else:
-        log.message(log.LogType.ERROR, "dirs.py", "_create_dir", f"failed to generate path \"{my_path}\"")
+        log.message(log.LogType.ERROR, "dirs.py", "_create_dir()", f"failed to generate path '{my_path}'")
         return False
 
 
 def check_and_make_dir(dir_type: DirType) -> bool:
     my_path: str = _get_dir_from_enum(dir_type)
-    return _crate_dir(my_path)
+    return _create_dir(my_path)
+
+
+def get_dir_from_file(file_type: FileType) -> str:
+    match file_type:
+        case FileType.LOG:
+            return _get_dir_from_enum(DirType.LOGS)
