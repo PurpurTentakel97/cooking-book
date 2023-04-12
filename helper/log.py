@@ -10,15 +10,17 @@ from datetime import datetime
 
 # @formatter:off
 class LogType(Enum):
-    DEBUG =          "DEBUG             ",
-    INFO =           "INFO              ",
+    DEBUG =           "DEBUG             ",
+    INFO =            "INFO              ",
 
-    SAVED =          "SAVED             ",
-    LOADED =         "LOADED            ",
+    SAVED =           "SAVED             ",
+    LOADED =          "LOADED            ",
 
-    BREAKING_ERROR = "[[ERROR BREAKING]]",
-    ERROR =          "[ERROR]           ",
-    EXPECTED_ERROR = "ERROR EXPECTED    ",
+    INVALID_ARGUMENT = "INVALID ARGUMENT "
+
+    BREAKING_ERROR =  "[[ERROR BREAKING]]",
+    ERROR =           "[ERROR]           ",
+    EXPECTED_ERROR =  "ERROR EXPECTED    ",
 # @formatter:on
 
 class _Log:
