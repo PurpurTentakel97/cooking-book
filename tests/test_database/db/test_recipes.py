@@ -10,7 +10,7 @@ from database import add as a
 from database import update as u
 from database import delete as d
 from database import select as s
-from tests import test_helper as t_h
+from tests.test_fixtures import database_fixture
 
 
 # select
@@ -26,11 +26,9 @@ from tests import test_helper as t_h
     ]),
 # @formatter:on
 ])
-def test_select_all_recipes(data) -> None:
+def test_select_all_recipes(data, database_fixture) -> None:
     data.sort(key=lambda x: x[1])
-    t_h.generate_temporary_database()
     result = s.select.select_all_recipes()
-    t_h.delete_temporary_database()
 
     assert result.valid
     for (s_ID, s_title, s_description), (ID, title, description) in zip(result.entry, data):
@@ -45,10 +43,8 @@ def test_select_all_recipes(data) -> None:
     (20, "",             "",               False),  # ID not existing
 # @formatter:on
 ])
-def test_select_recipe_by_ID(ID, title, description, expected) -> None:
-    t_h.generate_temporary_database()
+def test_select_recipe_by_ID(ID, title, description, expected, database_fixture) -> None:
     result = s.select.select_recipe_by_ID(ID)
-    t_h.delete_temporary_database()
 
     assert result.valid == expected
     if expected:
@@ -63,10 +59,8 @@ def test_select_recipe_by_ID(ID, title, description, expected) -> None:
     (1,  "Lasagne",      "",               False ),  # title not existing
 # @formatter:on
 ])
-def test_select_recipe_by_title(ID, title, description, expected) -> None:
-    t_h.generate_temporary_database()
+def test_select_recipe_by_title(ID, title, description, expected, database_fixture) -> None:
     result = s.select.select_recipe_by_title(title)
-    t_h.delete_temporary_database()
 
     assert result.valid == expected
     if expected:
@@ -86,11 +80,9 @@ def test_select_recipe_by_title(ID, title, description, expected) -> None:
     (6, "Lasagne",      "",               False ),  # no description
 # @formatter:on
 ])
-def test_add_recipe(ID, title, description, expected) -> None:
-    t_h.generate_temporary_database()
+def test_add_recipe(ID, title, description, expected, database_fixture) -> None:
     result = a.add.add_recipe(title, description)
     s1_result = s.select.select_recipe_by_title(title)
-    t_h.delete_temporary_database()
 
     assert result.valid == expected
     if expected:

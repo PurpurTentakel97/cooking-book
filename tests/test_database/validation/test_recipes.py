@@ -6,8 +6,8 @@
 
 import pytest
 
-from tests import test_helper as t_h
 from validation import v_database as v_d
+from tests.test_fixtures import database_fixture
 
 
 # select
@@ -18,10 +18,8 @@ from validation import v_database as v_d
     (bool(), False),  # wrong datatype
 # @formatter:on
 ])
-def test_select_recipe_by_ID(ID, expected) -> None:
-    t_h.generate_temporary_database()
+def test_select_recipe_by_ID(ID, expected, database_fixture) -> None:
     result = v_d.select_raw_type_by_ID(ID)
-    t_h.delete_temporary_database()
     assert result == expected
 
 
@@ -32,10 +30,8 @@ def test_select_recipe_by_ID(ID, expected) -> None:
     (bool(),         False),  # wrong datatype
 # @formatter:on
 ])
-def test_select_recipe_by_title(title, expected) -> None:
-    t_h.generate_temporary_database()
+def test_select_recipe_by_title(title, expected, database_fixture) -> None:
     result = v_d.select_recipe_by_title(title)
-    t_h.delete_temporary_database()
     assert result == expected
 
 
@@ -51,10 +47,8 @@ def test_select_recipe_by_title(title, expected) -> None:
     ("Pfannekuchen",  bool(),          False),  # wrong datatype
 # @formatter:on
 ])
-def test_add_recipe(title, description, expected) -> None:
-    t_h.generate_temporary_database()
+def test_add_recipe(title, description, expected, database_fixture) -> None:
     result = v_d.add_recipe(title, description)
-    t_h.delete_temporary_database()
     assert result == expected
 
 
@@ -68,10 +62,8 @@ def test_add_recipe(title, description, expected) -> None:
     (2,  "Nudelauflauf", "Beschreibung 1", False),  # title already existing
     # @formatter:on
 ])
-def test_update_recipe_by_ID(ID, title, description, expected) -> None:
-    t_h.generate_temporary_database()
+def test_update_recipe_by_ID(ID, title, description, expected, database_fixture) -> None:
     result = v_d.update_recipe_by_ID(ID, title, description)
-    t_h.delete_temporary_database()
     assert result == expected
 
 
@@ -83,9 +75,7 @@ def test_update_recipe_by_ID(ID, title, description, expected) -> None:
     ("Nudelauflauf", "Braten",       "Beschreibung 2", False),  # new title already existing
     # @formatter:on
 ])
-def test_update_recipe_by_title(old_title, new_title, description, expected) -> None:
-    t_h.generate_temporary_database()
+def test_update_recipe_by_title(old_title, new_title, description, expected, database_fixture) -> None:
     result = v_d.update_recipe_by_title(old_title, new_title, description)
-    t_h.delete_temporary_database()
     assert result == expected
 # /update

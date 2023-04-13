@@ -15,18 +15,12 @@ database: "Database"
 
 
 class Database:
-    def __init__(self, test: bool):
+    def __init__(self, my_path: str):
         self.OperationalError = sqlite3.OperationalError
         self.IntegrityError = sqlite3.IntegrityError
 
         # generate connection
-        if not test:
-            dirs.check_and_make_dir(dirs.DirType.DATABASE)
-            my_path = os.path.join(dirs.get_dir_from_file(dirs.FileType.DATABASE), dirs.FileType.DATABASE.value)
-        else:
-            dirs.check_and_make_dir(dirs.DirType.TEST_DATABASE)
-            my_path = os.path.join(dirs.get_dir_from_file(dirs.FileType.TEST_DATABASE),
-                                   dirs.FileType.TEST_DATABASE.value)
+        dirs.check_and_make_dir(dirs.DirType.DATABASE)
 
         if not os.path.exists(my_path):
             log.message(log.LogType.GENERATED, "database.py", "self.__init__()", "generated new database")
@@ -51,6 +45,6 @@ class Database:
         self.connection.close()
 
 
-def create_database(test: bool) -> None:
+def create_database(my_pyth: str) -> None:
     global database
-    database = Database(test)
+    database = Database(my_pyth)

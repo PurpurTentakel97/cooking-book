@@ -4,9 +4,8 @@
 # 12.04.2023
 #
 
-from tests import test_helper as t_h
+from tests.test_fixtures import database_fixture
 
 
-def test_generate_database() -> None:
-    t_h.generate_temporary_database()
-    t_h.delete_temporary_database()
+def test_generate_database(database_fixture) -> None:
+    pass

@@ -10,7 +10,7 @@ from database import add as a
 from database import update as u
 from database import delete as d
 from database import select as s
-from tests import test_helper as t_h
+from tests.test_fixtures import database_fixture
 
 
 # select
@@ -21,11 +21,9 @@ from tests import test_helper as t_h
      (3, "Abendessen")],
 # @formatter:on
 ])
-def test_select_all_raw_types(expected):
+def test_select_all_raw_types(expected, database_fixture):
     expected.sort(key=lambda x: x[1])
-    t_h.generate_temporary_database()
     values = s.select.select_all_raw_types()
-    t_h.delete_temporary_database()
 
     assert values.valid
     for (p_id, p_value), (l_id, l_value) in zip(expected, values.entry):
@@ -39,10 +37,8 @@ def test_select_all_raw_types(expected):
     (20, "",         False),  # ID not existing
 # @formatter:on
 ])
-def test_select_raw_type_by_ID(ID, value, expected) -> None:
-    t_h.generate_temporary_database()
+def test_select_raw_type_by_ID(ID, value, expected, database_fixture) -> None:
     result = s.select.select_raw_type_by_ID(ID)
-    t_h.delete_temporary_database()
 
     assert result.valid == expected
     if expected:
@@ -55,10 +51,8 @@ def test_select_raw_type_by_ID(ID, value, expected) -> None:
     ("Salat",       0, False),
 # @formatter:on
 ])
-def test_select_raw_type_ID_by_name(value, ID, expected) -> None:
-    t_h.generate_temporary_database()
+def test_select_raw_type_ID_by_name(value, ID, expected, database_fixture) -> None:
     result = s.select.select_raw_type_ID_by_name(value)
-    t_h.delete_temporary_database()
 
     assert result.valid == expected
     if expected:
@@ -74,11 +68,9 @@ def test_select_raw_type_ID_by_name(value, ID, expected) -> None:
     ("Frühstück", 0, False),  # value already exists
 # @formatter:on
 ])
-def test_add_raw_type(value, ID, expected) -> None:
-    t_h.generate_temporary_database()
+def test_add_raw_type(value, ID, expected, database_fixture) -> None:
     result = a.add.add_raw_type(value)
     s_result = s.select.select_raw_type_by_ID(4)
-    t_h.delete_temporary_database()
 
     assert result.valid == expected
     if expected:
@@ -95,12 +87,10 @@ def test_add_raw_type(value, ID, expected) -> None:
     (2,  "Frühstück", False),  # value already existing
 # @formatter:on
 ])
-def test_update_raw_type_by_ID(ID, value, expected) -> None:
-    t_h.generate_temporary_database()
+def test_update_raw_type_by_ID(ID, value, expected, database_fixture) -> None:
     result = u.update.update_raw_type_by_ID(ID, value)
     s1_result = s.select.select_raw_type_by_ID(ID)
     s2_result = s.select.select_raw_type_ID_by_name(value)
-    t_h.delete_temporary_database()
 
     assert result.valid == expected
     if expected:
@@ -118,11 +108,9 @@ def test_update_raw_type_by_ID(ID, value, expected) -> None:
     ("Frühstück", "Mittagessen", False),  # new_value already existing
 # @formatter:on
 ])
-def test_update_raw_type_by_name(old_value, new_value, expected) -> None:
-    t_h.generate_temporary_database()
+def test_update_raw_type_by_name(old_value, new_value, expected, database_fixture) -> None:
     result = u.update.update_raw_type_by_name(old_value, new_value)
     s_result = s.select.select_raw_type_ID_by_name(new_value)
-    t_h.delete_temporary_database()
 
     assert result.valid == expected
     if expected:
@@ -137,11 +125,9 @@ def test_update_raw_type_by_name(old_value, new_value, expected) -> None:
     (20, False),  # ID not existing
 # @formatter:on
 ])
-def test_delete_raw_type_by_ID(ID, expected) -> None:
-    t_h.generate_temporary_database()
+def test_delete_raw_type_by_ID(ID, expected, database_fixture) -> None:
     result = d.delete.delete_raw_type_by_ID(ID)
     s_result = s.select.select_raw_type_by_ID(ID)
-    t_h.delete_temporary_database()
 
     assert result.valid == expected
     if expected:
@@ -154,11 +140,9 @@ def test_delete_raw_type_by_ID(ID, expected) -> None:
     ("Nachtisch", False),  # value not existing
 # @formatter:on
 ])
-def test_delete_raw_type_by_name(value, expected) -> None:
-    t_h.generate_temporary_database()
+def test_delete_raw_type_by_name(value, expected, database_fixture) -> None:
     result = d.delete.delete_raw_type_by_name(value)
     s_result = s.select.select_raw_type_ID_by_name(value)
-    t_h.delete_temporary_database()
 
     assert result.valid == expected
     if expected:
