@@ -54,6 +54,42 @@ class Update:
             log.error(log.LogType.ERROR, "update.py", "self.update_raw_type_by_name()", sys.exc_info())
             return r_m.ReturnMessageStr(f"not able to update raw type -> {new_value}", False)
 
+    # /raw types
+
+    # recipes
+    def update_recipe_by_ID(self, ID: int, title: str, description: str) -> r_m.ReturnMessage:
+        title, description = title.strip(), description.strip()
+        if not v_d.update_recipe_by_ID(ID, title, description):
+            return r_m.ReturnMessageStr("no valid argument for updating recipe", False)
+
+        sql_command: str = f"""UPDATE recipes SET title = ?, description = ? WHERE ID is ?;"""
+        try:
+            self.db.cursor.execute(sql_command, (title, description))
+            self.db.connection.commit()
+
+            log.message(log.LogType.UPDATED, "update.py", "self.update_recipe_by_ID()", f"updated recipy -> {title}")
+            return r_m.ReturnMessageNone(True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "update.py", "self.update_recipe_by_ID()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"not able to update recipe -> {title}", False)
+
+    def update_recipe_by_title(self, old_title: str, new_title: str, description: str) -> r_m.ReturnMessage:
+        old_title, new_title, description = old_title.strip(), new_title.strip(), description.strip()
+        if not v_d.update_recipe_by_title(old_title, new_title, description):
+            return r_m.ReturnMessageStr("no valid argument for updating recipe", False)
+
+        sql_command: str = f"""UPDATE recipes SET title = ?, description = ? WHERE title is ?;"""
+        try:
+            self.db.cursor.execute(sql_command, (new_title, description))
+            self.db.connection.commit()
+
+            log.message(log.LogType.UPDATED, "update.py", "self.update_recipe_by_title()",
+                        f"updated recipy -> {new_title}")
+            return r_m.ReturnMessageNone(True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "update.py", "self.update_recipe_by_title()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"not able to update recipe -> {old_title}", False)
+
 
 def create_update(db: Database):
     global update

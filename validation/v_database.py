@@ -230,4 +230,64 @@ def add_recipe(title: str, description: str) -> bool:
             return False
 
     return True
+
+
 # /add
+# update
+def update_recipe_by_ID(ID: int, title: str, description: str) -> bool:
+    if not v_h.is_valid_ID(ID):
+        return False
+    if not v_h.is_valid_string(title):
+        return False
+    if not v_h.is_valid_string(description):
+        return False
+
+    result = s.select.select_all_recipes()
+    if not result.valid:
+        log.message(log.LogType.INFO, "v_database.py", "update_recipe_by_ID()", "ResultMassage not valid")
+        return False
+
+    for s_ID, s_title, _ in result.entry:
+        if s_title == title and s_ID != ID:
+            log.message(log.LogType.INFO, "v_database.py", "update_recipe_by_ID()",
+                        f"recipe with title already exists -> {title}")
+            return False
+
+    for s_ID, _, _ in result.entry:
+        if s_ID == ID:
+            return True
+
+    log.message(log.LogType.INFO, "v_database.py", "update_recipe_by_ID()",
+                f"no recipe with ID found -> {ID}")
+    return False
+
+
+def update_recipe_by_title(old_title: str, new_title: str, description: str) -> bool:
+    if not v_h.is_valid_string(old_title):
+        return False
+    if not v_h.is_valid_string(new_title):
+        return False
+    if not v_h.is_valid_string(description):
+        return False
+
+    result = s.select.select_all_recipes()
+    if not result.valid:
+        log.message(log.LogType.INFO, "v_database.py", "update_recipe_by_title()", "ResultMassage not valid")
+        return False
+
+    if new_title != old_title:
+        for _, s_title, _ in result.entry:
+            if s_title == new_title:
+                log.message(log.LogType.INFO, "v_database.py", "update_recipe_by_title()",
+                            f"recipe with title already exists -> {new_title}")
+                return False
+
+    for _, s_title, _ in result.entry:
+        if s_title == old_title:
+            return True
+
+    log.message(log.LogType.INFO, "v_database.py", "update_recipe_by_ID()",
+                f"no recipe with title found -> {old_title}")
+    return False
+
+# /update
