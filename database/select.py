@@ -1,6 +1,6 @@
 #
 # Purpur Tentakel
-# Cocking Book
+# Cooking Book
 # 12.04.2023
 #
 
@@ -75,7 +75,7 @@ class Select:
 
         sql_command: str = f"""SELECT ID,title,description FROM recipes WHERE ID IS ?;"""
         try:
-            result: tuple = self.db.cursor.execute(sql_command, (ID,)).fetchone()[0]
+            result: tuple = self.db.cursor.execute(sql_command, (ID,)).fetchone()
             log.message(log.LogType.LOADED, "select.py", "self.select_recipe_by_ID()",
                         f"selected recipe by ID -> {result}")
             return r_m.ReturnMessageTuple(result, True)
@@ -89,7 +89,7 @@ class Select:
 
         sql_command: str = f"""SELECT ID,title,description FROM recipes WHERE title IS ?;"""
         try:
-            result: tuple = self.db.cursor.execute(sql_command, (title,)).fetchone()[0]
+            result: tuple = self.db.cursor.execute(sql_command, (title,)).fetchone()
             log.message(log.LogType.LOADED, "select.py", "self.select_recipe_by_title()",
                         f"selected recipe by name -> {result}")
             return r_m.ReturnMessageTuple(result, True)

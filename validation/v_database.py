@@ -200,8 +200,8 @@ def select_recipe_by_title(title: str) -> bool:
         log.message(log.LogType.INFO, "v_database.py", "select_recipe_by_title()", "ResultMassage not valid")
         return False
 
-    for _, title, _ in result.entry:
-        if title == title:
+    for _, s_title, _ in result.entry:
+        if s_title == title:
             return True
 
     log.message(log.LogType.INFO, "v_database.py", "select_recipe_by_title()",
@@ -223,7 +223,7 @@ def add_recipe(title: str, description: str) -> bool:
         log.message(log.LogType.INFO, "v_database.py", "add_recipe()", "ResultMassage not valid")
         return False
 
-    for _,s_title,_ in result.entry:
+    for _, s_title, _ in result.entry:
         if s_title == title:
             log.message(log.LogType.INFO, "v_database.py", "add_recipe()",
                         f"recipe title already existing -> {title}")
