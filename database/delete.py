@@ -36,6 +36,7 @@ class Delete:
             return r_m.ReturnMessageStr(f"not able to delete raw type with ID -> {ID}", False)
 
     def delete_raw_type_by_name(self, value: str) -> r_m.ReturnMessage:
+        value = value.strip()
         if not v_d.delete_raw_type_by_name(value):
             return r_m.ReturnMessageStr("no valid arguments to delete raw type", False)
 

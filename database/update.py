@@ -20,6 +20,7 @@ class Update:
 
     # raw types
     def update_raw_type_by_ID(self, ID: int, value: str) -> r_m.ReturnMessage:
+        value = value.strip()
         if not v_d.update_raw_type_by_ID(ID, value):
             return r_m.ReturnMessageStr("no valid arguments for updating raw type", False)
 
@@ -37,6 +38,7 @@ class Update:
             return r_m.ReturnMessageStr(f"not able to update raw type -> {value}", False)
 
     def update_raw_type_by_name(self, old_value: str, new_value: str) -> r_m.ReturnMessage:
+        old_value, new_value = old_value.strip(), new_value.strip()
         if not v_d.update_raw_type_by_name(old_value, new_value):
             return r_m.ReturnMessageStr("no valid arguments for updating raw type", False)
 

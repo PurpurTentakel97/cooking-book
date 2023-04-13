@@ -18,9 +18,11 @@ class Add:
     def __init__(self, db: Database):
         self.db: Database = db
 
+    # raw type
     def add_raw_type(self, new_type: str) -> r_m.ReturnMessage:
+        new_type = new_type.strip()
         if not v_d.add_raw_type(new_type):
-            return r_m.ReturnMessageStr("no valid argument", False)
+            return r_m.ReturnMessageStr("no valid argument to add raw type", False)
 
         sql_command: str = f"""INSERT INTO raw_types (type) VALUES (?);"""
         try:
@@ -31,7 +33,26 @@ class Add:
 
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "add.py", "add_raw_type()", sys.exc_info())
-            return r_m.ReturnMessageStr("not able to add new type", False)
+            return r_m.ReturnMessageStr(f"not able to add new type -> {new_type}", False)
+
+    # /raw type
+
+    # recipe
+    def add_recipe(self, title: str, description: str) -> r_m.ReturnMessage:
+        title, description = title.strip(), description.strip()
+        if not v_d.add_recipe(title, description):
+            return r_m.ReturnMessageStr("no valid argument to add recipe", False)
+
+        sql_command: str = f"""INSERT INTO recipes (title, description) VALUES (? ,?);"""
+        try:
+            self.db.cursor.execute(sql_command, (title, description))
+            self.db.connection.commit()
+            log.message(log.LogType.SAVED, "add.py", "self.add_recipe()", f"add new recipe -> {title}")
+            return r_m.ReturnMessageNone(True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "add.py", "self.add_recipe()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"not able to add new recipe -> {title}", False)
+    # /recipe
 
 
 def create_add(db: Database):

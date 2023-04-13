@@ -165,5 +165,69 @@ def delete_raw_type_by_name(value: str) -> bool:
     log.message(log.LogType.INFO, "v_database.py", "delete_raw_type_by_ID()",
                 f"not entry value found to delete -> {value}")
     return False
+
+
 # /delete
 # /raw types
+
+# recipes
+# select
+
+def select_recipe_by_ID(ID: int) -> bool:
+    if not v_h.is_valid_ID(ID):
+        return False
+
+    result: r_m.ReturnMessage = s.select.select_all_recipes()
+    if not result.valid:
+        log.message(log.LogType.INFO, "v_database.py", "select_recipe_by_ID()", "ResultMassage not valid")
+        return False
+
+    for _id, *_ in result.entry:
+        if _id == ID:
+            return True
+
+    log.message(log.LogType.INFO, "v_database.py", "select_recipe_by_ID()",
+                f"no recipe with ID found -> {ID}")
+    return False
+
+
+def select_recipe_by_title(title: str) -> bool:
+    if not v_h.is_valid_string(title):
+        return False
+
+    result: r_m.ReturnMessage = s.select.select_all_recipes()
+    if not result.valid:
+        log.message(log.LogType.INFO, "v_database.py", "select_recipe_by_title()", "ResultMassage not valid")
+        return False
+
+    for _, title, _ in result.entry:
+        if title == title:
+            return True
+
+    log.message(log.LogType.INFO, "v_database.py", "select_recipe_by_title()",
+                f"no recipe with title found -> {title}")
+    return False
+
+
+# /select
+# add
+
+def add_recipe(title: str, description: str) -> bool:
+    if not v_h.is_valid_string(title):
+        return False
+    if not v_h.is_valid_string(description):
+        return False
+
+    result: r_m.ReturnMessage = s.select.select_all_recipes()
+    if not result.valid:
+        log.message(log.LogType.INFO, "v_database.py", "add_recipe()", "ResultMassage not valid")
+        return False
+
+    for _,s_title,_ in result.entry:
+        if s_title == title:
+            log.message(log.LogType.INFO, "v_database.py", "add_recipe()",
+                        f"recipe title already existing -> {title}")
+            return False
+
+    return True
+# /add
