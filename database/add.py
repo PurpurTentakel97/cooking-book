@@ -52,7 +52,25 @@ class Add:
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "add.py", "self.add_recipe()", sys.exc_info())
             return r_m.ReturnMessageStr(f"not able to add new recipe -> {title}", False)
+
     # /recipe
+
+    # ingredients
+    def add_ingredient(self, recipe_id: int, amount: float, unit: str, ingredient: str) -> r_m.ReturnMessage:
+        if not v_d.add_ingredient(recipe_id, amount, unit, ingredient):
+            return r_m.ReturnMessageStr("no valid argument to add ingredient", False)
+
+        sql_command: str = f"""INSERT INTO ingredients (recipe_id, amount, unit, ingredient) VALUES (?,?,?,?);"""
+        try:
+            self.db.cursor.execute(sql_command, (recipe_id, amount, unit, ingredient))
+            self.db.connection.commit()
+            log.message(log.LogType.SAVED, "add.py", "self.add_ingredient()", f"add new ingredient -> {ingredient}")
+            return r_m.ReturnMessageInt(self.db.cursor.lastrowid, True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "add.py", "self.add_ingredient()", sys.exc_info())
+            return r_m.ReturnMessageStr(f" not able to add new ingredient -> {ingredient}", False)
+
+    # /ingredients
 
 
 def create_add(db: Database):

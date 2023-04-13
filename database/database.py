@@ -48,3 +48,8 @@ class Database:
 def create_database(my_pyth: str) -> None:
     global database
     database = Database(my_pyth)
+
+
+def _uncreate_database() -> None:
+    global database
+    database = None

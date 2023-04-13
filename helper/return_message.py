@@ -32,3 +32,9 @@ class ReturnMessageTuple(ReturnMessage):
     def __init__(self, entry: tuple, valid: bool):
         super().__init__(valid)
         self.entry: tuple = entry
+
+
+class ReturnMessageList(ReturnMessage):
+    def __init__(self, entry: list, valid: bool):
+        super().__init__(valid)
+        self.entry: list = entry

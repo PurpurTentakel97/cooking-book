@@ -63,7 +63,8 @@ class Select:
         sql_command: str = f"""SELECT ID, title, description FROM recipes ORDER BY title ASC;"""
         try:
             result: tuple = self.db.cursor.execute(sql_command).fetchall()
-            log.message(log.LogType.LOADED, "select.py", "self.select_all_recipes()", f"selected All -> {result}")
+            log.message(log.LogType.LOADED, "select.py", "self.select_all_recipes()",
+                        f"selected All recipes-> {result}")
             return r_m.ReturnMessageTuple(result, True)
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "select.py", "self.select_all_recipes()", sys.exc_info())
@@ -71,7 +72,7 @@ class Select:
 
     def select_recipe_by_ID(self, ID: int) -> r_m.ReturnMessage:
         if not v_d.select_recipe_by_ID(ID):
-            return r_m.ReturnMessageStr("no valid arguments for select recipe", False)
+            return r_m.ReturnMessageStr("no valid arguments for selecting recipe", False)
 
         sql_command: str = f"""SELECT ID,title,description FROM recipes WHERE ID IS ?;"""
         try:
@@ -96,7 +97,50 @@ class Select:
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "select.py", "select.select_recipe_by_title()", sys.exc_info())
             return r_m.ReturnMessageStr(f"not able to load recipe with title -> {title}", False)
+
     # /recipe
+
+    # ingredients
+    def select_all_ingredients(self) -> r_m.ReturnMessage:
+        sql_command: str = f"""SELECT ID, recipe_id, amount, unit, ingredient FROM ingredients ORDER BY ingredient ASC;"""
+        try:
+            result = self.db.cursor.execute(sql_command).fetchall()
+            log.message(log.LogType.LOADED, "select.py", "self.select_all_ingredients()",
+                        f"selected all ingredients -> {result}")
+            return r_m.ReturnMessageList(result, True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "select.py", "self.select_all_ingredients()", sys.exc_info())
+            return r_m.ReturnMessageStr("could not load all ingredients", False)
+
+    def select_all_ingredients_from_recipe(self, recipe_ID: int) -> r_m.ReturnMessage:
+        if not v_d.select_all_ingredients_from_recipe(recipe_ID):
+            return r_m.ReturnMessageStr("no valid arguments for selecting ingredients", False)
+
+        sql_command: str = f"""SELECT ID, recipe_id, amount, unit, ingredient FROM ingredients WHERE recipe_id is ? ORDER BY ingredient ASC;"""
+        try:
+            result = self.db.cursor.execute(sql_command, (recipe_ID,)).fetchall()
+            log.message(log.LogType.LOADED, "select.py", "self.select_all_ingredients_from_recipe()",
+                        f"selected all ingredients from recipe -> {result}")
+            return r_m.ReturnMessageList(result, True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "select.py", "self.select_all_ingredients_from_recipe()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"could not load all ingredients from recipe ID ->{recipe_ID}")
+
+    def select_ingredient_by_ID(self, ID: int) -> r_m.ReturnMessage:
+        if not v_d.select_ingredient_by_ID(ID):
+            return r_m.ReturnMessageStr("no valid argument for selecting ingredient", False)
+
+        sql_command: str = f"""SELECT ID, recipe_id, amount, unit, ingredient FROM ingredients WHERE ID is ?;"""
+        try:
+            result = self.db.cursor.execute(sql_command, (ID,)).fetchone()
+            log.message(log.LogType.LOADED, "select.py", "self.select_ingredient_by_ID()",
+                        f"selected ingredient -> {result}")
+            return r_m.ReturnMessageTuple(result, True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "select.py", "self.select_ingredient_by_ID()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"could not load ingredient from ID ->{ID}")
+
+    # /ingredients
 
 
 def create_select(db: Database):

@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS "main"."ingredients"(
 "_created" INTEGER DEFAULT (CAST(strftime('%s', 'now') AS INTEGER)),
 "_updated" INTEGER DEFAULT (CAST(strftime('%s', 'now') AS INTEGER)),
 "recipe_id" INTEGER NOT NULL,
-"amount" INTEGER NOT NULL,
+"amount" REAL NOT NULL,
 "unit" TEXT,
 "ingredient" TEXT NOT NULL,
 PRIMARY KEY ("ID" AUTOINCREMENT),
