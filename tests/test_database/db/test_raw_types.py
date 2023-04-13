@@ -13,152 +13,154 @@ from database import select as s
 
 
 # select
+# @formatter:off
 @pytest.mark.parametrize("expected", [
-    [(1, "Frühstück"),
+    [(1, "Frühstück"  ),
      (2, "Mittagessen"),
      (3, "Abendessen")],
+# @formatter:on
 ])
 def test_select_all_raw_types(expected):
     expected.sort(key=lambda x: x[1])
     t_h.generate_temporary_database()
     values = s.select.select_all_raw_types()
+    t_h.delete_temporary_database()
 
     assert values.valid
-
     for (p_id, p_value), (l_id, l_value) in zip(expected, values.entry):
         assert p_id == l_id
         assert p_value == l_value
 
-    t_h.delete_temporary_database()
 
-
+# @formatter:off
 @pytest.mark.parametrize(("ID", "value", "expected"), [
-    (1, "Frühstück", True),
-    (20, "", False),  # ID not existing
+    (1, "Frühstück", True ),
+    (20, "",         False),  # ID not existing
+# @formatter:on
 ])
 def test_select_raw_type_by_ID(ID, value, expected) -> None:
     t_h.generate_temporary_database()
-
     result = s.select.select_raw_type_by_ID(ID)
+    t_h.delete_temporary_database()
+
     assert result.valid == expected
     if expected:
         assert result.entry == value
 
-    t_h.delete_temporary_database()
 
-
+# @formatter:off
 @pytest.mark.parametrize(("value", "ID", "expected"), [
-    ("Mittagessen", 2, True),
-    ("Salat", 0, False),
+    ("Mittagessen", 2, True ),
+    ("Salat",       0, False),
+# @formatter:on
 ])
 def test_select_raw_type_ID_by_name(value, ID, expected) -> None:
     t_h.generate_temporary_database()
-
     result = s.select.select_raw_type_ID_by_name(value)
+    t_h.delete_temporary_database()
+
     assert result.valid == expected
     if expected:
         assert result.entry == ID
-
-    t_h.delete_temporary_database()
 
 
 # /select
 
 # add
+# @formatter:off
 @pytest.mark.parametrize(("value", "ID", "expected"), [
-    ("Nachtisch", 4, True),
+    ("Nachtisch", 4, True ),
     ("Frühstück", 0, False),  # value already exists
+# @formatter:on
 ])
 def test_add_raw_type(value, ID, expected) -> None:
     t_h.generate_temporary_database()
     result = a.add.add_raw_type(value)
+    s_result = s.select.select_raw_type_by_ID(4)
+    t_h.delete_temporary_database()
 
     assert result.valid == expected
-
     if expected:
-        s_result = s.select.select_raw_type_by_ID(4)
         assert s_result.valid
         assert s_result.entry == value
-
-    t_h.delete_temporary_database()
 
 
 # /add
 # update
+# @formatter:off
 @pytest.mark.parametrize(("ID", "value", "expected"), [
-    (1, "Nachtisch", True),
+    (1,  "Nachtisch", True ),
     (10, "Nachtisch", False),  # ID not existing
-    (2, "Frühstück", False),  # value already existing
+    (2,  "Frühstück", False),  # value already existing
+# @formatter:on
 ])
 def test_update_raw_type_by_ID(ID, value, expected) -> None:
     t_h.generate_temporary_database()
-
     result = u.update.update_raw_type_by_ID(ID, value)
-    assert result.valid == expected
-
-    if expected:
-        result = s.select.select_raw_type_by_ID(ID)
-        assert result.valid
-        assert result.entry == value
-
-        result = s.select.select_raw_type_ID_by_name(value)
-        assert result.valid
-        assert result.entry == ID
-
+    s1_result = s.select.select_raw_type_by_ID(ID)
+    s2_result = s.select.select_raw_type_ID_by_name(value)
     t_h.delete_temporary_database()
 
+    assert result.valid == expected
+    if expected:
+        assert s1_result.valid
+        assert s1_result.entry == value
 
+        assert s2_result.valid
+        assert s2_result.entry == ID
+
+
+# @formatter:off
 @pytest.mark.parametrize(("old_value", "new_value", "expected"), [
-    ("Frühstück", "Nachtisch", True),
-    ("Nachtisch", "Suppe", False),  # old_value not existing
+    ("Frühstück", "Nachtisch",   True ),
+    ("Nachtisch", "Suppe",       False),  # old_value not existing
     ("Frühstück", "Mittagessen", False),  # new_value already existing
+# @formatter:on
 ])
 def test_update_raw_type_by_name(old_value, new_value, expected) -> None:
     t_h.generate_temporary_database()
-
     result = u.update.update_raw_type_by_name(old_value, new_value)
-    assert result.valid == expected
-
-    if expected:
-        result = s.select.select_raw_type_ID_by_name(new_value)
-        assert result.valid
-
+    s_result = s.select.select_raw_type_ID_by_name(new_value)
     t_h.delete_temporary_database()
+
+    assert result.valid == expected
+    if expected:
+        assert s_result.valid
 
 
 # /update
 # delete
+# @formatter:off
 @pytest.mark.parametrize(("ID", "expected"), [
-    (1, True),
+    (1,  True ),
     (20, False),  # ID not existing
+# @formatter:on
 ])
 def test_delete_raw_type_by_ID(ID, expected) -> None:
     t_h.generate_temporary_database()
-
     result = d.delete.delete_raw_type_by_ID(ID)
-    assert result.valid == expected
-
-    if expected:
-        result = s.select.select_raw_type_by_ID(ID)
-        assert not result.valid
-
+    s_result = s.select.select_raw_type_by_ID(ID)
     t_h.delete_temporary_database()
 
+    assert result.valid == expected
+    if expected:
+        assert not s_result.valid
 
+
+# @formatter:off
 @pytest.mark.parametrize(("value", "expected"), [
-    ("Frühstück", True),
+    ("Frühstück", True ),
     ("Nachtisch", False),  # value not existing
+# @formatter:on
 ])
 def test_delete_raw_type_by_name(value, expected) -> None:
     t_h.generate_temporary_database()
-
     result = d.delete.delete_raw_type_by_name(value)
-    assert result.valid == expected
-
-    if expected:
-        result = s.select.select_raw_type_ID_by_name(value)
-        assert not result.valid
-
+    s_result = s.select.select_raw_type_ID_by_name(value)
     t_h.delete_temporary_database()
+
+    assert result.valid == expected
+    if expected:
+        assert not s_result.valid
 
 # /delete
