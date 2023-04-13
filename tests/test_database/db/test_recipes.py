@@ -90,4 +90,46 @@ def test_add_recipe(ID, title, description, expected, database_fixture) -> None:
         assert s_ID == ID
         assert s_title == title
         assert s_description == description
+
+
 # /add
+# update
+@pytest.mark.parametrize(("ID", "title", "description", "expected"), [
+    # @formatter:off
+    (1,  "Nachtisch", "Beschreibung 6", True ),
+    (20, "test",      "test",           False),  # ID not existing
+    (1,  "Braten",    "Beschreibung 2", False),  # title already existing
+
+    # @formatter:on
+])
+def test_update_recipe_by_ID(ID, title, description, expected, database_fixture) -> None:
+    result = u.update.update_recipe_by_ID(ID, title, description)
+    s_result = s.select.select_recipe_by_ID(ID)
+
+    assert result.valid == expected
+
+    if expected:
+        s_ID, s_title, s_description = s_result.entry
+        assert s_ID == ID
+        assert s_title == title
+        assert s_description == description
+
+
+@pytest.mark.parametrize(("old_title", "new_title", "description", "expected"), [
+    # @formatter:off
+    ("Nudelauflauf", "Nachtisch", "Beschreibung 6", True ),
+    ("Nachtisch",    "test",      "test",           False),  # old title not existing
+    ("Nudelauflauf", "Braten",    "test",           False)  # new title already existing
+
+    # @formatter:on
+])
+def test_update_recipe_by_title(old_title, new_title, description, expected, database_fixture) -> None:
+    result = u.update.update_recipe_by_title(old_title,new_title,description)
+    s_result = s.select.select_recipe_by_title(new_title)
+
+    assert result.valid == expected
+
+    if expected:
+        _, s_title, s_description = s_result.entry
+        assert s_title == new_title
+        assert s_description == description

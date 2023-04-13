@@ -64,7 +64,7 @@ class Update:
 
         sql_command: str = f"""UPDATE recipes SET title = ?, description = ? WHERE ID is ?;"""
         try:
-            self.db.cursor.execute(sql_command, (title, description))
+            self.db.cursor.execute(sql_command, (title, description, ID))
             self.db.connection.commit()
 
             log.message(log.LogType.UPDATED, "update.py", "self.update_recipe_by_ID()", f"updated recipy -> {title}")
@@ -80,7 +80,7 @@ class Update:
 
         sql_command: str = f"""UPDATE recipes SET title = ?, description = ? WHERE title is ?;"""
         try:
-            self.db.cursor.execute(sql_command, (new_title, description))
+            self.db.cursor.execute(sql_command, (new_title, description, old_title))
             self.db.connection.commit()
 
             log.message(log.LogType.UPDATED, "update.py", "self.update_recipe_by_title()",
