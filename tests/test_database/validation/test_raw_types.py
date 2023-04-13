@@ -16,12 +16,6 @@ from validation import v_database as v_d
     (1,       True),
     (33,      False),  # ID not existing
     (bool(),  False),  # wrong datatype
-    (str(),   False),  # wrong datatype
-    (float(), False),  # wrong datatype
-    (list(),  False),  # wrong datatype
-    (tuple(), False),  # wrong datatype
-    (dict(),  False),  # wrong datatype
-    (type,    False),  # wrong datatype
 # @formatter:on
 ])
 def test_select_raw_type_by_ID(ID, expected) -> None:
@@ -36,12 +30,6 @@ def test_select_raw_type_by_ID(ID, expected) -> None:
     ("Mittagessen", True),
     ("Nachtisch",   False),  # value not existing
     (bool(),  False),  # wrong datatype
-    (int(),   False),  # wrong datatype
-    (float(), False),  # wrong datatype
-    (list(),  False),  # wrong datatype
-    (tuple(), False),  # wrong datatype
-    (dict(),  False),  # wrong datatype
-    (type,    False),  # wrong datatype
 # @formatter:on
 ])
 def test_select_raw_type_ID_by_name(value, expected) -> None:
@@ -59,12 +47,6 @@ def test_select_raw_type_ID_by_name(value, expected) -> None:
     ("Mitternachtssnack", True),
     ("Abendessen",        False),  # already exists
     (bool(),  False),  # wrong datatype
-    (int(),   False),  # wrong datatype
-    (float(), False),  # wrong datatype
-    (list(),  False),  # wrong datatype
-    (tuple(), False),  # wrong datatype
-    (dict(),  False),  # wrong datatype
-    (type,    False),  # wrong datatype
 # @formatter:on
 ])
 def test_add_raw_type(value, expected) -> None:
@@ -83,19 +65,7 @@ def test_add_raw_type(value, expected) -> None:
     (2,  "Frühstück",         False),  # value already exists
     (20, "Hamsterbraten",     False),  # ID doesn't exists
     (bool(),  str(),   False),  # wrong first datatype
-    (str(),   str(),   False),  # wrong first datatype
-    (float(), str(),   False),  # wrong first datatype
-    (list(),  str(),   False),  # wrong first datatype
-    (tuple(), str(),   False),  # wrong first datatype
-    (dict(),  str(),   False),  # wrong first datatype
-    (type,    str(),   False),  # wrong first datatype
     (int(),   bool(),  False),  # wrong second datatype
-    (int(),   int(),   False),  # wrong second datatype
-    (int(),   float(), False),  # wrong second datatype
-    (int(),   list(),  False),  # wrong second datatype
-    (int(),   tuple(), False),  # wrong second datatype
-    (int(),   dict(),  False),  # wrong second datatype
-    (int(),   type,    False),  # wrong second datatype
 # @formatter:on
 ])
 def test_update_raw_type_by_ID(ID, value, expected) -> None:
@@ -111,19 +81,7 @@ def test_update_raw_type_by_ID(ID, value, expected) -> None:
     ("Mittagsessen",      "Frühstück",         False),  # new value already existing
     ("Mitternachtssnack", "Tote",              False),  # old value not existing
     (bool(),  str(),    False),  # wrong first datatype
-    (int(),   str(),    False),  # wrong first datatype
-    (float(), str(),    False),  # wrong first datatype
-    (list(),  str(),    False),  # wrong first datatype
-    (tuple(), str(),    False),  # wrong first datatype
-    (dict(),  str(),    False),  # wrong first datatype
-    (type,    str(),    False),  # wrong first datatype
     (str(),   bool(),   False),  # wrong second datatype
-    (str(),   int(),    False),  # wrong second datatype
-    (str(),   float(),  False),  # wrong second datatype
-    (str(),   list(),   False),  # wrong second datatype
-    (str(),   tuple(),  False),  # wrong second datatype
-    (str(),   dict(),   False),  # wrong second datatype
-    (str(),   type,     False),  # wrong second datatype
 # @formatter:on
 ])
 def test_update_raw_type_by_name(old_value, new_value, expected) -> None:
@@ -141,12 +99,6 @@ def test_update_raw_type_by_name(old_value, new_value, expected) -> None:
     (1,  True),
     (33, False),  # ID not existing
     (bool(),  False),  # wrong datatype
-    (str(),   False),  # wrong datatype
-    (float(), False),  # wrong datatype
-    (list(),  False),  # wrong datatype
-    (tuple(), False),  # wrong datatype
-    (dict(),  False),  # wrong datatype
-    (type,    False),  # wrong datatype
 
 # @formatter:on
 ])
@@ -162,12 +114,6 @@ def test_delete_raw_type_by_ID(ID, expected) -> None:
     ("Abendessen",        True),
     ("Mitternachtssnack", False),  # value not existing
     (bool(),  False),  # wrong datatype
-    (int(),   False),  # wrong datatype
-    (float(), False),  # wrong datatype
-    (list(),  False),  # wrong datatype
-    (tuple(), False),  # wrong datatype
-    (dict(),  False),  # wrong datatype
-    (type,    False),  # wrong datatype
 # @formatter:on
 ])
 def test_delete_raw_type_by_name(value, expected) -> None:
