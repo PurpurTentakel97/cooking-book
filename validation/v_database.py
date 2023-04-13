@@ -290,4 +290,44 @@ def update_recipe_by_title(old_title: str, new_title: str, description: str) -> 
                 f"no recipe with title found -> {old_title}")
     return False
 
+
 # /update
+
+# delete
+def delete_recipe_by_ID(ID: int) -> bool:
+    if not v_h.is_valid_ID(ID):
+        return False
+
+    result = s.select.select_all_recipes()
+
+    if not result.valid:
+        log.message(log.LogType.INFO, "v_database.py", "delete_recipe_by_ID()", "ResultMessage not valid")
+
+    for s_ID, _, _ in result.entry:
+        if s_ID == ID:
+            return True
+
+    log.message(log.LogType.INFO, "v_database.py", "delete_recipe_by_ID()",
+                f"no recipe with ID found -> {ID}")
+    return False
+
+
+def delete_recipe_by_title(title: str) -> bool:
+    if not v_h.is_valid_string(title):
+        return False
+
+    result = s.select.select_all_recipes()
+
+    if not result.valid:
+        log.message(log.LogType.INFO, "v_database.py", "delete_recipe_by_title()", "ResultMessage not valid")
+
+    for _, s_title, _ in result.entry:
+        if s_title == title:
+            return True
+
+    log.message(log.LogType.INFO, "v_database.py", "delete_recipe_by_title()",
+                f"no recipe with title found -> {title}")
+    return False
+
+# /delete
+# /recipes

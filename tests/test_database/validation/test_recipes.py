@@ -6,6 +6,7 @@
 
 import pytest
 
+import database.delete
 from validation import v_database as v_d
 from tests.test_fixtures import database_fixture
 
@@ -78,4 +79,28 @@ def test_update_recipe_by_ID(ID, title, description, expected, database_fixture)
 def test_update_recipe_by_title(old_title, new_title, description, expected, database_fixture) -> None:
     result = v_d.update_recipe_by_title(old_title, new_title, description)
     assert result == expected
+
+
 # /update
+
+# delete
+@pytest.mark.parametrize(("ID", "expected"), [
+    # @formatter:off
+    (1,  True ),
+    (20, False),  # ID not existing
+    # @formatter:on
+])
+def test_delete_recipe_by_ID(ID, expected, database_fixture) -> None:
+    result = v_d.delete_recipe_by_ID(ID)
+    assert result == expected
+
+
+@pytest.mark.parametrize(("title", "expected"), [
+    # @formatter:off
+    ("Nudelauflauf", True ),
+    ("Abendessen",   False),  # title not existing
+    # @formatter:on
+])
+def test_delete_recipe_by_title(title, expected, database_fixture) -> None:
+    result = v_d.delete_recipe_by_title(title)
+    assert result == expected

@@ -89,6 +89,7 @@ class Update:
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "update.py", "self.update_recipe_by_title()", sys.exc_info())
             return r_m.ReturnMessageStr(f"not able to update recipe -> {old_title}", False)
+    # /recipes
 
 
 def create_update(db: Database):

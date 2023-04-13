@@ -124,7 +124,7 @@ def test_update_recipe_by_ID(ID, title, description, expected, database_fixture)
     # @formatter:on
 ])
 def test_update_recipe_by_title(old_title, new_title, description, expected, database_fixture) -> None:
-    result = u.update.update_recipe_by_title(old_title,new_title,description)
+    result = u.update.update_recipe_by_title(old_title, new_title, description)
     s_result = s.select.select_recipe_by_title(new_title)
 
     assert result.valid == expected
@@ -133,3 +133,40 @@ def test_update_recipe_by_title(old_title, new_title, description, expected, dat
         _, s_title, s_description = s_result.entry
         assert s_title == new_title
         assert s_description == description
+
+
+# /update
+
+# delete
+@pytest.mark.parametrize(("ID", "expected"), [
+    # @formatter:off
+    (1,  True ),
+    (20, False),  # ID not existing
+    # @formatter:on
+])
+def test_delete_recipe_by_ID(ID, expected, database_fixture) -> None:
+    result = d.delete.delete_recipe_by_ID(ID)
+    s_result = s.select.select_recipe_by_ID(ID)
+
+    assert result.valid == expected
+
+    if expected:
+        assert not s_result.valid
+
+
+@pytest.mark.parametrize(("title", "expected"), [
+    # @formatter:off
+    ("Nudelauflauf", True ),
+    ("Nachtisch",    False),  # title not existing
+    # @formatter:on
+])
+def test_delete_recipe_by_title(title, expected, database_fixture) -> None:
+    result = d.delete.delete_recipe_by_title(title)
+    s_result = s.select.select_recipe_by_title(title)
+
+    assert result.valid == expected
+
+    if expected:
+        assert not s_result.valid
+
+# /delete
