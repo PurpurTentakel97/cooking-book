@@ -13,7 +13,7 @@ from validation import v_database as v_d
 # select
 @pytest.mark.parametrize(("ID", "expected"), [
     (1, True),
-    (33, False)  # ID not existing
+    (33, False),  # ID not existing
 ])
 def test_select_raw_type_by_ID(ID, expected) -> None:
     t_h.generate_temporary_database()
@@ -23,7 +23,7 @@ def test_select_raw_type_by_ID(ID, expected) -> None:
 
 @pytest.mark.parametrize(("value", "expected"), [
     ("Mittagessen", True),
-    ("Nachtisch", False)  # value not existing
+    ("Nachtisch", False),  # value not existing
 ])
 def test_select_raw_type_ID_by_name(value, expected) -> None:
     t_h.generate_temporary_database()
@@ -74,7 +74,7 @@ def test_update_raw_type_by_name(old_value, new_value, expected) -> None:
 # delete
 @pytest.mark.parametrize(("ID", "expected"), [
     (1, True),
-    (33, False)  # ID not existing
+    (33, False),  # ID not existing
 ])
 def test_delete_raw_type_by_ID(ID, expected) -> None:
     t_h.generate_temporary_database()
