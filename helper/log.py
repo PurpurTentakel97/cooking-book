@@ -49,7 +49,7 @@ class _Log:
     def as_dict(self) -> dict[str, str]:
         return {
             "date": self.date_as_string(),
-            "log type": self.log_type.value[0].strip(),
+            "log type": self.log_type.value.strip(),
             "file": self.file,
             "function": self.function,
             "text": self.text
