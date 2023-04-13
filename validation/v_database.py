@@ -12,6 +12,11 @@ from helper import return_message as r_m
 # raw type
 # select
 def select_raw_type_by_ID(ID: int) -> bool:
+    if type(ID) != int:
+        log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "select_raw_type_by_ID()",
+                    f"provided id is no int -> {ID}")
+        return False
+
     result: r_m.ReturnMessage = s.select.select_all_raw_types()
     if not result.valid:
         log.message(log.LogType.INFO, "v_database.py", "select_raw_type_by_ID()", "ResultMassage not valid")
@@ -26,6 +31,11 @@ def select_raw_type_by_ID(ID: int) -> bool:
 
 
 def select_raw_type_ID_by_name(value: str) -> bool:
+    if type(value) != str:
+        log.message(log.LogType.INFO, "v_database.py", "select_raw_type_ID_by_name()",
+                    f"provided value is no string -> {value}")
+        return False
+
     result: r_m.ReturnMessage = s.select.select_all_raw_types()
     if not result.valid:
         log.message(log.LogType.INFO, "v_database.py", "select_raw_type_by_name()", "ReturnMessage not valid")
@@ -36,7 +46,7 @@ def select_raw_type_ID_by_name(value: str) -> bool:
             return True
 
     log.message(log.LogType.INFO, "v_database.py", "select_raw_type_by_name()",
-                f"taw type name not existing -> {value}")
+                f"raw type name not existing -> {value}")
     return False
 
 
@@ -45,6 +55,11 @@ def select_raw_type_ID_by_name(value: str) -> bool:
 
 # add
 def add_raw_type(value: str) -> bool:
+    if type(value) != str:
+        log.message(log.LogType.INFO, "v_database.py", "add_raw_type()",
+                    f"provided value is no string -> {value}")
+        return False
+
     result: r_m.ReturnMessage = s.select.select_all_raw_types()
     if not result.valid:
         log.message(log.LogType.INFO, "v_database.py", "add_raw_type()", "ResultMassage not valid")
@@ -64,6 +79,15 @@ def add_raw_type(value: str) -> bool:
 
 # update
 def update_raw_type_by_ID(ID: int, value: str) -> bool:
+    if type(value) != str:
+        log.message(log.LogType.INFO, "v_database.py", "update_raw_type_by_ID()",
+                    f"provided value is no string -> {value}")
+        return False
+    if type(ID) != int:
+        log.message(log.LogType.INFO, "v_database.py", "update_raw_type_by_ID()",
+                    f"provided ID is no int -> {ID}")
+        return False
+
     result: r_m.ReturnMessage = s.select.select_all_raw_types()
     if not result.valid:
         log.message(log.LogType.INFO, "v_database.py", "update_raw_type_by_ID()", "ResultMassage not valid")
@@ -85,6 +109,13 @@ def update_raw_type_by_ID(ID: int, value: str) -> bool:
 
 
 def update_raw_type_by_name(old_type: str, new_type: str) -> bool:
+    if type(old_type) != str:
+        log.message(log.LogType.INFO, "v_database.py", "update_raw_type_by_name()",
+                    f"provided value is no string -> {old_type}")
+    if type(new_type) != str:
+        log.message(log.LogType.INFO, "v_database.py", "update_raw_type_by_name()",
+                    f"provided value is no string -> {new_type}")
+
     result: r_m.ReturnMessage = s.select.select_all_raw_types()
     if not result.valid:
         log.message(log.LogType.INFO, "v_database.py", "update_raw_type_by_type()", "ResultMassage not valid")
@@ -110,6 +141,11 @@ def update_raw_type_by_name(old_type: str, new_type: str) -> bool:
 
 # delete
 def delete_raw_type_by_ID(ID: int) -> bool:
+    if type(ID) != int:
+        log.message(log.LogType.INFO, "v_database.py", "delete_raw_type_by_ID()",
+                    f"provided ID is no int -> {ID}")
+        return False
+
     result: r_m.ReturnMessage = s.select.select_all_raw_types()
     if not result.valid:
         log.message(log.LogType.INFO, "v_database.py", "delete_raw_type_by_ID()", "ResultMassage not valid")
@@ -125,6 +161,10 @@ def delete_raw_type_by_ID(ID: int) -> bool:
 
 
 def delete_raw_type_by_name(value: str) -> bool:
+    if type(value) != str:
+        log.message(log.LogType.INFO, "v_database.py", "delete_raw_type_by_name()",
+                    f"provided value is no string -> {value}")
+
     result: r_m.ReturnMessage = s.select.select_all_raw_types()
     if not result.valid:
         log.message(log.LogType.INFO, "v_database.py", "delete_raw_type_by_ID()", "ResultMassage not valid")
