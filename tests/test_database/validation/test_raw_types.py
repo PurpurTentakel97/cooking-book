@@ -6,8 +6,8 @@
 
 import pytest
 
-from tests.test_fixtures import database_fixture
 from validation import v_database as v_d
+from tests.test_fixtures import database_fixture
 
 
 # select
@@ -18,8 +18,8 @@ from validation import v_database as v_d
     (bool(),  False),  # wrong datatype
 # @formatter:on
 ])
-def test_select_raw_type_by_ID(ID, expected, database_fixture) -> None:
-    result = v_d.select_raw_type_by_ID(ID)
+def test_check_select_raw_type_by_ID(ID, expected, database_fixture) -> None:
+    result = v_d.check_select_raw_type_by_ID(ID)
     assert result == expected
 
 
@@ -30,8 +30,8 @@ def test_select_raw_type_by_ID(ID, expected, database_fixture) -> None:
     (bool(),  False),  # wrong datatype
 # @formatter:on
 ])
-def test_select_raw_type_ID_by_name(value, expected, database_fixture) -> None:
-    result = v_d.select_raw_type_ID_by_name(value)
+def test_check_select_raw_type_ID_by_name(value, expected, database_fixture) -> None:
+    result = v_d.check_select_raw_type_ID_by_name(value)
     assert result == expected
 
 
@@ -45,8 +45,8 @@ def test_select_raw_type_ID_by_name(value, expected, database_fixture) -> None:
     (bool(),  False),  # wrong datatype
 # @formatter:on
 ])
-def test_add_raw_type(value, expected, database_fixture) -> None:
-    result = v_d.add_raw_type(value)
+def test_check_add_raw_type(value, expected, database_fixture) -> None:
+    result = v_d.check_add_raw_type(value)
     assert result == expected
 
 
@@ -62,8 +62,8 @@ def test_add_raw_type(value, expected, database_fixture) -> None:
     (int(),   bool(),  False),  # wrong second datatype
 # @formatter:on
 ])
-def test_update_raw_type_by_ID(ID, value, expected, database_fixture) -> None:
-    result = v_d.update_raw_type_by_ID(ID, value)
+def test_check_update_raw_type_by_ID(ID, value, expected, database_fixture) -> None:
+    result = v_d.check_update_raw_type_by_ID(ID, value)
     assert result == expected
 
 
@@ -76,8 +76,8 @@ def test_update_raw_type_by_ID(ID, value, expected, database_fixture) -> None:
     (str(),   bool(),   False),  # wrong second datatype
 # @formatter:on
 ])
-def test_update_raw_type_by_name(old_value, new_value, expected, database_fixture) -> None:
-    result = v_d.update_raw_type_by_name(old_value, new_value)
+def test_check_update_raw_type_by_name(old_value, new_value, expected, database_fixture) -> None:
+    result = v_d.check_update_raw_type_by_name(old_value, new_value)
     assert result == expected
 
 
@@ -92,8 +92,8 @@ def test_update_raw_type_by_name(old_value, new_value, expected, database_fixtur
 
 # @formatter:on
 ])
-def test_delete_raw_type_by_ID(ID, expected, database_fixture) -> None:
-    result = v_d.delete_raw_type_by_ID(ID)
+def test_check_delete_raw_type_by_ID(ID, expected, database_fixture) -> None:
+    result = v_d.check_delete_raw_type_by_ID(ID)
     assert result == expected
 
 
@@ -104,7 +104,7 @@ def test_delete_raw_type_by_ID(ID, expected, database_fixture) -> None:
     (bool(),  False),  # wrong datatype
 # @formatter:on
 ])
-def test_delete_raw_type_by_name(value, expected, database_fixture) -> None:
-    result = v_d.delete_raw_type_by_name(value)
+def test_check_delete_raw_type_by_name(value, expected, database_fixture) -> None:
+    result = v_d.check_delete_raw_type_by_name(value)
     assert result == expected
 # /delete

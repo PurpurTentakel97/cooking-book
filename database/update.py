@@ -21,7 +21,7 @@ class Update:
     # raw types
     def update_raw_type_by_ID(self, ID: int, value: str) -> r_m.ReturnMessage:
         value = value.strip()
-        if not v_d.update_raw_type_by_ID(ID, value):
+        if not v_d.check_update_raw_type_by_ID(ID, value):
             return r_m.ReturnMessageStr("no valid arguments for updating raw type", False)
 
         sql_command: str = f"""UPDATE raw_types SET type = ? WHERE ID is ?;"""
@@ -39,7 +39,7 @@ class Update:
 
     def update_raw_type_by_name(self, old_value: str, new_value: str) -> r_m.ReturnMessage:
         old_value, new_value = old_value.strip(), new_value.strip()
-        if not v_d.update_raw_type_by_name(old_value, new_value):
+        if not v_d.check_update_raw_type_by_name(old_value, new_value):
             return r_m.ReturnMessageStr("no valid arguments for updating raw type", False)
 
         sql_command: str = f"""UPDATE raw_types SET type = ? WHERE type is ?;"""
@@ -59,7 +59,7 @@ class Update:
     # recipes
     def update_recipe_by_ID(self, ID: int, title: str, description: str) -> r_m.ReturnMessage:
         title, description = title.strip(), description.strip()
-        if not v_d.update_recipe_by_ID(ID, title, description):
+        if not v_d.check_update_recipe_by_ID(ID, title, description):
             return r_m.ReturnMessageStr("no valid argument for updating recipe", False)
 
         sql_command: str = f"""UPDATE recipes SET title = ?, description = ? WHERE ID is ?;"""
@@ -75,7 +75,7 @@ class Update:
 
     def update_recipe_by_title(self, old_title: str, new_title: str, description: str) -> r_m.ReturnMessage:
         old_title, new_title, description = old_title.strip(), new_title.strip(), description.strip()
-        if not v_d.update_recipe_by_title(old_title, new_title, description):
+        if not v_d.check_update_recipe_by_title(old_title, new_title, description):
             return r_m.ReturnMessageStr("no valid argument for updating recipe", False)
 
         sql_command: str = f"""UPDATE recipes SET title = ?, description = ? WHERE title is ?;"""
@@ -95,7 +95,7 @@ class Update:
     # ingredients
     def update_ingredient_by_ID(self, ID: int, amount: float, unit: str, ingredient: str) -> r_m.ReturnMessage:
         unit, ingredient = unit.strip(), ingredient.strip()
-        if not v_d.update_ingredient_by_ID(ID, amount, unit, ingredient):
+        if not v_d.check_update_ingredient_by_ID(ID, amount, unit, ingredient):
             return r_m.ReturnMessageStr("no valid argument for updating recipe", False)
 
         sql_command: str = f"""UPDATE ingredients SET amount = ?, unit = ?, ingredient = ? WHERE ID is ?;"""

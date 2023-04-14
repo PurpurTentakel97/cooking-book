@@ -6,7 +6,6 @@
 
 import pytest
 
-import database.delete
 from validation import v_database as v_d
 from tests.test_fixtures import database_fixture
 
@@ -19,8 +18,8 @@ from tests.test_fixtures import database_fixture
     (bool(), False),  # wrong datatype
 # @formatter:on
 ])
-def test_select_recipe_by_ID(ID, expected, database_fixture) -> None:
-    result = v_d.select_raw_type_by_ID(ID)
+def test_check_select_recipe_by_ID(ID, expected, database_fixture) -> None:
+    result = v_d.check_select_raw_type_by_ID(ID)
     assert result == expected
 
 
@@ -31,8 +30,8 @@ def test_select_recipe_by_ID(ID, expected, database_fixture) -> None:
     (bool(),         False),  # wrong datatype
 # @formatter:on
 ])
-def test_select_recipe_by_title(title, expected, database_fixture) -> None:
-    result = v_d.select_recipe_by_title(title)
+def test_check_select_recipe_by_title(title, expected, database_fixture) -> None:
+    result = v_d.check_select_recipe_by_title(title)
     assert result == expected
 
 
@@ -48,8 +47,8 @@ def test_select_recipe_by_title(title, expected, database_fixture) -> None:
     ("Pfannekuchen",  bool(),          False),  # wrong datatype
 # @formatter:on
 ])
-def test_add_recipe(title, description, expected, database_fixture) -> None:
-    result = v_d.add_recipe(title, description)
+def test_check_add_recipe(title, description, expected, database_fixture) -> None:
+    result = v_d.check_add_recipe(title, description)
     assert result == expected
 
 
@@ -63,8 +62,8 @@ def test_add_recipe(title, description, expected, database_fixture) -> None:
     (2,  "Nudelauflauf", "Beschreibung 1", False),  # title already existing
     # @formatter:on
 ])
-def test_update_recipe_by_ID(ID, title, description, expected, database_fixture) -> None:
-    result = v_d.update_recipe_by_ID(ID, title, description)
+def test_check_update_recipe_by_ID(ID, title, description, expected, database_fixture) -> None:
+    result = v_d.check_update_recipe_by_ID(ID, title, description)
     assert result == expected
 
 
@@ -76,8 +75,8 @@ def test_update_recipe_by_ID(ID, title, description, expected, database_fixture)
     ("Nudelauflauf", "Braten",       "Beschreibung 2", False),  # new title already existing
     # @formatter:on
 ])
-def test_update_recipe_by_title(old_title, new_title, description, expected, database_fixture) -> None:
-    result = v_d.update_recipe_by_title(old_title, new_title, description)
+def test_check_update_recipe_by_title(old_title, new_title, description, expected, database_fixture) -> None:
+    result = v_d.check_update_recipe_by_title(old_title, new_title, description)
     assert result == expected
 
 
@@ -90,8 +89,8 @@ def test_update_recipe_by_title(old_title, new_title, description, expected, dat
     (20, False),  # ID not existing
     # @formatter:on
 ])
-def test_delete_recipe_by_ID(ID, expected, database_fixture) -> None:
-    result = v_d.delete_recipe_by_ID(ID)
+def test_check_delete_recipe_by_ID(ID, expected, database_fixture) -> None:
+    result = v_d.check_delete_recipe_by_ID(ID)
     assert result == expected
 
 
@@ -101,6 +100,6 @@ def test_delete_recipe_by_ID(ID, expected, database_fixture) -> None:
     ("Abendessen",   False),  # title not existing
     # @formatter:on
 ])
-def test_delete_recipe_by_title(title, expected, database_fixture) -> None:
-    result = v_d.delete_recipe_by_title(title)
+def test_check_delete_recipe_by_title(title, expected, database_fixture) -> None:
+    result = v_d.check_delete_recipe_by_title(title)
     assert result == expected

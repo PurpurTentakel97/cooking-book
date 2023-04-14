@@ -21,7 +21,7 @@ class Add:
     # raw type
     def add_raw_type(self, new_type: str) -> r_m.ReturnMessage:
         new_type = new_type.strip()
-        if not v_d.add_raw_type(new_type):
+        if not v_d.check_add_raw_type(new_type):
             return r_m.ReturnMessageStr("no valid argument to add raw type", False)
 
         sql_command: str = f"""INSERT INTO raw_types (type) VALUES (?);"""
@@ -40,7 +40,7 @@ class Add:
     # recipe
     def add_recipe(self, title: str, description: str) -> r_m.ReturnMessage:
         title, description = title.strip(), description.strip()
-        if not v_d.add_recipe(title, description):
+        if not v_d.check_add_recipe(title, description):
             return r_m.ReturnMessageStr("no valid argument to add recipe", False)
 
         sql_command: str = f"""INSERT INTO recipes (title, description) VALUES (? ,?);"""
@@ -57,7 +57,7 @@ class Add:
 
     # ingredients
     def add_ingredient(self, recipe_id: int, amount: float, unit: str, ingredient: str) -> r_m.ReturnMessage:
-        if not v_d.add_ingredient(recipe_id, amount, unit, ingredient):
+        if not v_d.check_add_ingredient(recipe_id, amount, unit, ingredient):
             return r_m.ReturnMessageStr("no valid argument to add ingredient", False)
 
         sql_command: str = f"""INSERT INTO ingredients (recipe_id, amount, unit, ingredient) VALUES (?,?,?,?);"""

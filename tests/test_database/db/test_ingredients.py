@@ -131,3 +131,42 @@ def test_update_ingredient_by_ID(ID, amount, unit, ingredient, expected, databas
         assert s_amount == amount
         assert s_unit == unit.strip()
         assert s_ingredient == ingredient.strip()
+
+
+# /update
+
+# delete
+
+@pytest.mark.parametrize(("ID", "expected"), [
+    # @formatter:off
+    (1,  True ),  # expected normal input
+    (20, False),  # ID not existing
+    # @formatter:on
+])
+def test_delete_ingredient_by_ID(ID, expected, database_fixture) -> None:
+    result = d.delete.delete_ingredient_by_ID(ID)
+
+    assert result.valid == expected
+    if expected:
+        s_result = s.select.select_ingredient_by_ID(ID)
+        assert not s_result.valid
+
+
+@pytest.mark.parametrize(("recipe_ID", "expected"), [
+    # @formatter:off
+    (1,  True ),  # expected normal input
+    (20, False),  # recipe_Id not existing
+    # @formatter:on
+])
+def test_delete_ingredients_by_recipe_ID(recipe_ID, expected, database_fixture) -> None:
+    result = d.delete.delete_ingredients_by_recipe_ID(recipe_ID)
+
+    assert result.valid == expected
+    if expected:
+        s_result = s.select.select_all_ingredients()
+        assert s_result.valid
+        for _, s_recipe_ID, *_ in s_result.entry:
+            assert s_recipe_ID != recipe_ID
+
+
+# /delete

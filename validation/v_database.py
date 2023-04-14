@@ -12,7 +12,7 @@ from validation import v_helper as v_h
 
 # raw type
 # select
-def select_raw_type_by_ID(ID: int) -> bool:
+def check_select_raw_type_by_ID(ID: int) -> bool:
     if not v_h.is_valid_ID(ID):
         return False
 
@@ -30,7 +30,7 @@ def select_raw_type_by_ID(ID: int) -> bool:
     return False
 
 
-def select_raw_type_ID_by_name(value: str) -> bool:
+def check_select_raw_type_ID_by_name(value: str) -> bool:
     if not v_h.is_valid_string(value):
         return False
 
@@ -52,7 +52,7 @@ def select_raw_type_ID_by_name(value: str) -> bool:
 
 
 # add
-def add_raw_type(value: str) -> bool:
+def check_add_raw_type(value: str) -> bool:
     if not v_h.is_valid_string(value):
         return False
 
@@ -74,7 +74,7 @@ def add_raw_type(value: str) -> bool:
 
 
 # update
-def update_raw_type_by_ID(ID: int, value: str) -> bool:
+def check_update_raw_type_by_ID(ID: int, value: str) -> bool:
     if not v_h.is_valid_string(value):
         return False
 
@@ -101,7 +101,7 @@ def update_raw_type_by_ID(ID: int, value: str) -> bool:
     return False
 
 
-def update_raw_type_by_name(old_type: str, new_type: str) -> bool:
+def check_update_raw_type_by_name(old_type: str, new_type: str) -> bool:
     if not v_h.is_valid_string(old_type):
         return False
 
@@ -132,7 +132,7 @@ def update_raw_type_by_name(old_type: str, new_type: str) -> bool:
 
 
 # delete
-def delete_raw_type_by_ID(ID: int) -> bool:
+def check_delete_raw_type_by_ID(ID: int) -> bool:
     if not v_h.is_valid_ID(ID):
         return False
 
@@ -150,7 +150,7 @@ def delete_raw_type_by_ID(ID: int) -> bool:
     return False
 
 
-def delete_raw_type_by_name(value: str) -> bool:
+def check_delete_raw_type_by_name(value: str) -> bool:
     if not v_h.is_valid_string(value):
         return False
 
@@ -174,7 +174,7 @@ def delete_raw_type_by_name(value: str) -> bool:
 # recipes
 # select
 
-def select_recipe_by_ID(ID: int) -> bool:
+def check_select_recipe_by_ID(ID: int) -> bool:
     if not v_h.is_valid_ID(ID):
         return False
 
@@ -192,7 +192,7 @@ def select_recipe_by_ID(ID: int) -> bool:
     return False
 
 
-def select_recipe_by_title(title: str) -> bool:
+def check_select_recipe_by_title(title: str) -> bool:
     if not v_h.is_valid_string(title):
         return False
 
@@ -213,7 +213,7 @@ def select_recipe_by_title(title: str) -> bool:
 # /select
 # add
 
-def add_recipe(title: str, description: str) -> bool:
+def check_add_recipe(title: str, description: str) -> bool:
     if not v_h.is_valid_string(title):
         return False
     if not v_h.is_valid_string(description):
@@ -235,7 +235,7 @@ def add_recipe(title: str, description: str) -> bool:
 
 # /add
 # update
-def update_recipe_by_ID(ID: int, title: str, description: str) -> bool:
+def check_update_recipe_by_ID(ID: int, title: str, description: str) -> bool:
     if not v_h.is_valid_ID(ID):
         return False
     if not v_h.is_valid_string(title):
@@ -263,7 +263,7 @@ def update_recipe_by_ID(ID: int, title: str, description: str) -> bool:
     return False
 
 
-def update_recipe_by_title(old_title: str, new_title: str, description: str) -> bool:
+def check_update_recipe_by_title(old_title: str, new_title: str, description: str) -> bool:
     if not v_h.is_valid_string(old_title):
         return False
     if not v_h.is_valid_string(new_title):
@@ -295,7 +295,7 @@ def update_recipe_by_title(old_title: str, new_title: str, description: str) -> 
 # /update
 
 # delete
-def delete_recipe_by_ID(ID: int) -> bool:
+def check_delete_recipe_by_ID(ID: int) -> bool:
     if not v_h.is_valid_ID(ID):
         return False
 
@@ -313,7 +313,7 @@ def delete_recipe_by_ID(ID: int) -> bool:
     return False
 
 
-def delete_recipe_by_title(title: str) -> bool:
+def check_delete_recipe_by_title(title: str) -> bool:
     if not v_h.is_valid_string(title):
         return False
 
@@ -336,7 +336,7 @@ def delete_recipe_by_title(title: str) -> bool:
 
 # ingredients
 # select
-def select_all_ingredients_from_recipe(recipe_ID: int) -> bool:
+def check_select_all_ingredients_from_recipe(recipe_ID: int) -> bool:
     if not v_h.is_valid_ID(recipe_ID):
         return False
 
@@ -356,7 +356,7 @@ def select_all_ingredients_from_recipe(recipe_ID: int) -> bool:
     return False
 
 
-def select_ingredient_by_ID(ID: int) -> bool:
+def check_select_ingredient_by_ID(ID: int) -> bool:
     if not v_h.is_valid_ID(ID):
         return False
 
@@ -379,7 +379,7 @@ def select_ingredient_by_ID(ID: int) -> bool:
 # /select
 
 # add
-def add_ingredient(recipe_id: int, amount: float, unit: str, ingredient: str) -> bool:
+def check_add_ingredient(recipe_id: int, amount: float, unit: str, ingredient: str) -> bool:
     if not v_h.is_valid_ID(recipe_id):
         return False
     if not v_h.is_valid_positive_float(amount):
@@ -416,7 +416,7 @@ def add_ingredient(recipe_id: int, amount: float, unit: str, ingredient: str) ->
 
 # update
 
-def update_ingredient_by_ID(ID: int, amount: float, unit: str, ingredient: str) -> bool:
+def check_update_ingredient_by_ID(ID: int, amount: float, unit: str, ingredient: str) -> bool:
     if not v_h.is_valid_ID(ID):
         return False
     if not v_h.is_valid_positive_float(amount):
@@ -447,4 +447,42 @@ def update_ingredient_by_ID(ID: int, amount: float, unit: str, ingredient: str) 
 
     return True
 
+
 # /update
+
+# delete
+def check_delete_ingredient_by_ID(ID: int) -> bool:
+    if not v_h.is_valid_ID(ID):
+        return False
+
+    result = s.select.select_all_ingredients()
+    if not v_h.is_valid_Return_Message(result):
+        return False
+
+    for s_ID, *_ in result.entry:
+        if s_ID == ID:
+            return True
+
+    log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "check_delete_ingredient_by_ID()",
+                f"no ingredient with ID found -> {ID}")
+    return False
+
+
+def check_delete_ingredients_by_recipe_ID(recipe_ID: int) -> bool:
+    if not v_h.is_valid_ID(recipe_ID):
+        return False
+
+    result = s.select.select_all_recipes()
+    if not v_h.is_valid_Return_Message(result):
+        return False
+
+    for s_ID, *_ in result.entry:
+        if s_ID == recipe_ID:
+            return True
+
+    log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "check_delete_ingredients_by_recipe_ID()",
+                f"no recipe with ID found -> {recipe_ID}")
+    return False
+
+# /delete
+# /ingredients

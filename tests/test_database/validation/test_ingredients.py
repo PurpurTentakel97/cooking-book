@@ -6,8 +6,8 @@
 
 import pytest
 
-from tests.test_fixtures import database_fixture
 from validation import v_database as v_d
+from tests.test_fixtures import database_fixture
 
 
 # select
@@ -17,8 +17,8 @@ from validation import v_database as v_d
     (20, False),  # recipe ID not existing
     # @formatter:on
 ])
-def test_select_all_ingredients_from_recipe(recipe_ID, expected, database_fixture) -> None:
-    result = v_d.select_all_ingredients_from_recipe(recipe_ID)
+def test_check_select_all_ingredients_from_recipe(recipe_ID, expected, database_fixture) -> None:
+    result = v_d.check_select_all_ingredients_from_recipe(recipe_ID)
     assert result == expected
 
 
@@ -28,8 +28,8 @@ def test_select_all_ingredients_from_recipe(recipe_ID, expected, database_fixtur
     (20, False)  # ID not existing
     # @formatter:on
 ])
-def test_select_ingredient_by_ID(ID, expected, database_fixture) -> None:
-    result = v_d.select_ingredient_by_ID(ID)
+def test_check_select_ingredient_by_ID(ID, expected, database_fixture) -> None:
+    result = v_d.check_select_ingredient_by_ID(ID)
     assert result == expected
 
 
@@ -44,8 +44,8 @@ def test_select_ingredient_by_ID(ID, expected, database_fixture) -> None:
     (1, 150.0,  "g", "Nudeln",      False),  # ingredient already existing
     # @formatter:on
 ])
-def test_add_ingredient(recipe_id, amount, unit, ingredient, expected, database_fixture) -> None:
-    result = v_d.add_ingredient(recipe_id, amount, unit, ingredient)
+def test_check_add_ingredient(recipe_id, amount, unit, ingredient, expected, database_fixture) -> None:
+    result = v_d.check_add_ingredient(recipe_id, amount, unit, ingredient)
     assert result == expected
 
 
@@ -61,8 +61,33 @@ def test_add_ingredient(recipe_id, amount, unit, ingredient, expected, database_
     (1, 300.0, "ml", "Tomaten", False),  # ingredient already existing in recipe
     # @formatter:on
 ])
-def test_update_ingredient_by_ID(ID, amount, unit, ingredient, expected, database_fixture) -> None:
-    result = v_d.update_ingredient_by_ID(ID, amount, unit, ingredient)
+def test_check_update_ingredient_by_ID(ID, amount, unit, ingredient, expected, database_fixture) -> None:
+    result = v_d.check_update_ingredient_by_ID(ID, amount, unit, ingredient)
     assert result == expected
 
+
 # /update
+
+# delete
+@pytest.mark.parametrize(("ID", "expected"), [
+    # @formatter:off
+    (1,  True ),  # expected normal input
+    (20, False),  # ID not existing
+    # @formatter:on
+])
+def test_check_delete_ingredient_by_ID(ID, expected, database_fixture) -> None:
+    result = v_d.check_delete_ingredient_by_ID(ID)
+    assert result == expected
+
+
+@pytest.mark.parametrize(("recipe_ID", "expected"), [
+    # @formatter:off
+    (1,  True ),  # expected normal input
+    (20, False),  # recipe_ID not existing
+    # @formatter:on
+])
+def test_check_delete_ingredients_by_recipe_ID(recipe_ID, expected, database_fixture) -> None:
+    result = v_d.check_delete_ingredients_by_recipe_ID(recipe_ID)
+    assert result == expected
+
+# /delete

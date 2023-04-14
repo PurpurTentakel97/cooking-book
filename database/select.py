@@ -30,7 +30,7 @@ class Select:
             return r_m.ReturnMessageStr(f"could not load all raw types.", False)
 
     def select_raw_type_by_ID(self, ID: int) -> r_m.ReturnMessage:
-        if not v_d.select_raw_type_by_ID(ID):
+        if not v_d.check_select_raw_type_by_ID(ID):
             return r_m.ReturnMessageStr("no valid arguments for select raw type", False)
 
         sql_command: str = f"""SELECT type FROM raw_types WHERE ID = ?;"""
@@ -44,7 +44,7 @@ class Select:
 
     def select_raw_type_ID_by_name(self, value: str) -> r_m.ReturnMessage:
         value = value.strip()
-        if not v_d.select_raw_type_ID_by_name(value):
+        if not v_d.check_select_raw_type_ID_by_name(value):
             return r_m.ReturnMessageStr("no valid arguments for select raw type", False)
 
         sql_command: str = f"""SELECT ID FROM raw_types WHERE type = ?;"""
@@ -71,7 +71,7 @@ class Select:
             return r_m.ReturnMessageStr("could not load all recipes", False)
 
     def select_recipe_by_ID(self, ID: int) -> r_m.ReturnMessage:
-        if not v_d.select_recipe_by_ID(ID):
+        if not v_d.check_select_recipe_by_ID(ID):
             return r_m.ReturnMessageStr("no valid arguments for selecting recipe", False)
 
         sql_command: str = f"""SELECT ID,title,description FROM recipes WHERE ID IS ?;"""
@@ -85,7 +85,7 @@ class Select:
             return r_m.ReturnMessageStr(f"not able to load recipe with ID -> {ID}", False)
 
     def select_recipe_by_title(self, title: str) -> r_m.ReturnMessage:
-        if not v_d.select_recipe_by_title(title):
+        if not v_d.check_select_recipe_by_title(title):
             return r_m.ReturnMessageStr("no valid arguments for select recipe", False)
 
         sql_command: str = f"""SELECT ID,title,description FROM recipes WHERE title IS ?;"""
@@ -113,7 +113,7 @@ class Select:
             return r_m.ReturnMessageStr("could not load all ingredients", False)
 
     def select_all_ingredients_from_recipe(self, recipe_ID: int) -> r_m.ReturnMessage:
-        if not v_d.select_all_ingredients_from_recipe(recipe_ID):
+        if not v_d.check_select_all_ingredients_from_recipe(recipe_ID):
             return r_m.ReturnMessageStr("no valid arguments for selecting ingredients", False)
 
         sql_command: str = f"""SELECT ID, recipe_id, amount, unit, ingredient FROM ingredients WHERE recipe_id is ? ORDER BY ingredient ASC;"""
@@ -127,7 +127,7 @@ class Select:
             return r_m.ReturnMessageStr(f"could not load all ingredients from recipe ID ->{recipe_ID}")
 
     def select_ingredient_by_ID(self, ID: int) -> r_m.ReturnMessage:
-        if not v_d.select_ingredient_by_ID(ID):
+        if not v_d.check_select_ingredient_by_ID(ID):
             return r_m.ReturnMessageStr("no valid argument for selecting ingredient", False)
 
         sql_command: str = f"""SELECT ID, recipe_id, amount, unit, ingredient FROM ingredients WHERE ID is ?;"""
