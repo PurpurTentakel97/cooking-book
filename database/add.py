@@ -29,7 +29,7 @@ class Add:
             self.db.cursor.execute(sql_command, (new_type,))
             self.db.connection.commit()
             log.message(log.LogType.SAVED, "add.py", "add_raw_type()", f"new raw_type added -> {new_type}")
-            return r_m.ReturnMessageNone(True)
+            return r_m.ReturnMessageInt(self.db.cursor.lastrowid, True)
 
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "add.py", "add_raw_type()", sys.exc_info())
@@ -48,7 +48,7 @@ class Add:
             self.db.cursor.execute(sql_command, (title, description))
             self.db.connection.commit()
             log.message(log.LogType.SAVED, "add.py", "self.add_recipe()", f"add new recipe -> {title}")
-            return r_m.ReturnMessageNone(True)
+            return r_m.ReturnMessageInt(self.db.cursor.lastrowid, True)
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "add.py", "self.add_recipe()", sys.exc_info())
             return r_m.ReturnMessageStr(f"not able to add new recipe -> {title}", False)

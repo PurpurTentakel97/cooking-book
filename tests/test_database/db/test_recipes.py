@@ -72,21 +72,23 @@ def test_select_recipe_by_title(ID, title, description, expected, database_fixtu
 # /select
 
 # add
-# @formatter:off
-@pytest.mark.parametrize(("ID","title","description", "expected"), [
-    (6, "Lasagne",      "Beschreibung 6", True  ),
-    (6, "Lasagne",      "Beschreibung 1", True  ),
+
+@pytest.mark.parametrize(("ID", "title", "description", "expected"), [
+    # @formatter:off
+    (6, "Lasagne",      "Beschreibung 6", True  ),  # expected normal input
+    (6, "Lasagne",      "Beschreibung 1", True  ),  # normal input with same description
     (6, "Nudelauflauf", "Beschreibung 6", False ),  # title already existing
     (6, "Lasagne",      "",               False ),  # no description
-# @formatter:on
+    # @formatter:on
 ])
 def test_add_recipe(ID, title, description, expected, database_fixture) -> None:
     result = a.add.add_recipe(title, description)
-    s1_result = s.select.select_recipe_by_title(title)
 
     assert result.valid == expected
     if expected:
-        s_ID, s_title, s_description = s1_result.entry
+        s_result = s.select.select_recipe_by_ID(result.entry)
+        assert s_result.valid
+        s_ID, s_title, s_description = s_result.entry
         assert s_ID == ID
         assert s_title == title
         assert s_description == description

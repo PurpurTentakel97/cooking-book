@@ -1,3 +1,2 @@
-return ID in all add functions (tests)
 tests for stripping string in database
 comment all test. evenb valid ones

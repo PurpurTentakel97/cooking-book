@@ -63,17 +63,17 @@ def test_select_raw_type_ID_by_name(value, ID, expected, database_fixture) -> No
 
 # add
 # @formatter:off
-@pytest.mark.parametrize(("value", "ID", "expected"), [
-    ("Nachtisch", 4, True ),
-    ("Frühstück", 0, False),  # value already exists
+@pytest.mark.parametrize(("value", "expected"), [
+    ("Nachtisch", True ),  # expected normal input
+    ("Frühstück", False),  # value already exists
 # @formatter:on
 ])
-def test_add_raw_type(value, ID, expected, database_fixture) -> None:
+def test_add_raw_type(value, expected, database_fixture) -> None:
     result = a.add.add_raw_type(value)
-    s_result = s.select.select_raw_type_by_ID(4)
 
     assert result.valid == expected
     if expected:
+        s_result = s.select.select_raw_type_by_ID(result.entry)
         assert s_result.valid
         assert s_result.entry == value
 
