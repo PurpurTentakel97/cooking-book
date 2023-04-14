@@ -33,7 +33,7 @@ from tests.test_fixtures import database_fixture
 
      (12, 5, 1000.0, "g",  "Mehl"             ),
      (13, 5, 600.0,  "ml", "Wasser"           ),
-     (14, 5, 10.5,   "g",  "Trocken Hefe"     ), ],
+     (14, 5, 10.5,   "g",  "Trocken Hefe"     ), ],  # complete data of the database
     # @formatter:on
 ])
 def test_select_all_ingredients(data, database_fixture) -> None:
@@ -51,7 +51,7 @@ def test_select_all_ingredients(data, database_fixture) -> None:
 
 @pytest.mark.parametrize(("recipe_ID", "expected"), [
     # @formatter:off
-    (1,  True ),
+    (1,  True ),  # recipe ID is existing
     (20, False),  # recipe ID not existing
     # @formatter:on
 ])
@@ -67,8 +67,8 @@ def test_select_all_ingredients_from_recipe(recipe_ID, expected, database_fixtur
 
 @pytest.mark.parametrize(("ID", "ingredient", "expected"), [
     # @formatter:off
-    (1,  "Nudeln", True ),
-    (20, "",       False)  # ID not existing
+    (1,  "Nudeln", True ),  # ID is existing
+    (20, "test",   False),  # ID not existing
     # @formatter:on
 ])
 def test_select_ingredient_by_ID(ID, ingredient, expected, database_fixture) -> None:
@@ -85,10 +85,12 @@ def test_select_ingredient_by_ID(ID, ingredient, expected, database_fixture) -> 
 # add
 @pytest.mark.parametrize(("recipy_id", "amount", "unit", "ingredient", "expected"), [
     # @formatter:off
-    (1,  30.0, "g",    "Mehl",   True ),
-    (1,  30.0, "",     "Mehl",   True ),
+    (1,  30.0, "g",    "Mehl",   True ),  # new ingredient
+    (1,  30.0, "",     "Mehl",   True ),  # new ingredient with no unit
+    (1,  0.0,  "",     "Mehl",   False),  # no amount
+    (1,  30.0, "test", "",       False),  # no ingredient
     (20, 1.0,  "test", "test",   False),  # recipe ID not existing
-    (1,  30.0, "",     "Nudeln", False)  # ingredient already exists
+    (1,  30.0, "",     "Nudeln", False),  # ingredient already exists
     # @formatter:on
 ])
 def test_add_ingredients(recipy_id, amount, unit, ingredient, expected, database_fixture) -> None:
@@ -111,12 +113,14 @@ def test_add_ingredients(recipy_id, amount, unit, ingredient, expected, database
 # update
 @pytest.mark.parametrize(("ID", "amount", "unit", "ingredient", "expected"), [
     # @formatter:off
-    (1, 300.0, "ml", "Milch", True),  # expected normal input
-    (1, 300.0, "", "Milch", True),  # normal input without unit
-    (1, 300.0, "ml   ", "Milch", True),  # normal input with need to strip unit
-    (1, 300.0, "ml", "Milch      ", True),  # normal input with need to strip ingredient
-    (20, 300.0, "ml", "Milch", False),  # ID not existing
-    (1, 300.0, "ml", "Tomaten", False),  # ingredient already existing in recipe
+    (1,  300.0, "ml",        "Milch",          True ),  # expected normal input
+    (1,  300.0, "",          "Milch",          True ),  # normal input without unit
+    (1,  300.0, "    ml   ", "Milch",          True ),  # normal input with need to strip unit
+    (1,  300.0, "ml",        "   Milch      ", True ),  # normal input with need to strip ingredient
+    (20, 300.0, "ml",        "Milch",          False),  # ID not existing
+    (1,  0.0,   "ml",        "Milch",          False),  # no amount
+    (1,  300.0, "ml",        "",               False),  # no ingredient
+    (1,  300.0, "ml",        "Tomaten",        False),  # ingredient already existing in recipe
     # @formatter:on
 ])
 def test_update_ingredient_by_ID(ID, amount, unit, ingredient, expected, database_fixture) -> None:

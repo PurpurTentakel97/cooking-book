@@ -6,10 +6,11 @@
 
 import sys
 
-from database.database import Database
+from helper import log
+from database import select as s
+from database.my_database import Database
 from helper import return_message as r_m
 from validation import v_database as v_d
-from helper import log
 
 delete: "Delete"
 
@@ -56,9 +57,16 @@ class Delete:
 
     # recipes
     def delete_recipe_by_ID(self, ID: int) -> r_m.ReturnMessage:
+        # validate data
         if not v_d.check_delete_recipe_by_ID(ID):
             return r_m.ReturnMessageStr("no valid arguments for deleting recipe", False)
 
+        # delete ingredients from recipe
+        result = self.delete_ingredients_by_recipe_ID(ID)
+        if not result.valid:
+            return r_m.ReturnMessageStr(f"not able to delete the ingredients of recipe with ID -> {ID}", False)
+
+        # delete recipe
         sql_command: str = f"""DELETE FROM recipes WHERE ID is ?;"""
         try:
             self.db.cursor.execute(sql_command, (ID,))
@@ -72,9 +80,20 @@ class Delete:
             return r_m.ReturnMessageStr(f"not able to delete recipe with ID -> {ID}", False)
 
     def delete_recipe_by_title(self, title: str) -> r_m.ReturnMessage:
+        # validate data
         if not v_d.check_delete_recipe_by_title(title):
             return r_m.ReturnMessageStr("no valid arguments fpr deleting recipe", False)
 
+        # delete ingredients from recipe
+        result = s.select.select_recipe_by_title(title)
+        if not result.valid:
+            return r_m.ReturnMessageStr(f"not able to select the ingredients of recipe with title -> {title}", False)
+        ID, *_ = result.entry
+        result = self.delete_ingredients_by_recipe_ID(ID)
+        if not result.valid:
+            return r_m.ReturnMessageStr(f"not able to delete the ingredients of recipe with title -> {title}", False)
+
+        # delete recipe
         sql_command: str = f"""DELETE FROM recipes WHERE title is ?;"""
         try:
             self.db.cursor.execute(sql_command, (title,))

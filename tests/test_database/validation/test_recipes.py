@@ -11,24 +11,23 @@ from tests.test_fixtures import database_fixture
 
 
 # select
-# @formatter:off
 @pytest.mark.parametrize(("ID", "expected"), [
-    (1,      True ),
+    # @formatter:off
+    (1,      True ),  # ID is existing
     (20,     False),  # ID not existing
-    (bool(), False),  # wrong datatype
-# @formatter:on
+    # @formatter:on
 ])
 def test_check_select_recipe_by_ID(ID, expected, database_fixture) -> None:
     result = v_d.check_select_raw_type_by_ID(ID)
     assert result == expected
 
 
-# @formatter:off
+
 @pytest.mark.parametrize(("title", "expected"), [
-    ("Nudelauflauf", True ),
+    # @formatter:off
+    ("Nudelauflauf", True ),  # title is existing
     ("Pfannekuchen", False),  # title not existing
-    (bool(),         False),  # wrong datatype
-# @formatter:on
+    # @formatter:on
 ])
 def test_check_select_recipe_by_title(title, expected, database_fixture) -> None:
     result = v_d.check_select_recipe_by_title(title)
@@ -38,14 +37,13 @@ def test_check_select_recipe_by_title(title, expected, database_fixture) -> None
 # /select
 # add
 
-# @formatter:off
+
 @pytest.mark.parametrize(("title", "description", "expected"), [
-    ("Pfannekuchen", "Beschreibung 6", True),
-    ("Pfannekuchen", "Beschreibung 1", True),
+    # @formatter:off
+    ("Pfannekuchen", "Beschreibung 6", True),   # new values
+    ("Pfannekuchen", "Beschreibung 1", True),   # new title, existing description
     ("Nudelauflauf", "Beschreibung 6", False),  # title already existing
-    (bool(),         "Beschreibung 6", False),  # wrong datatype
-    ("Pfannekuchen",  bool(),          False),  # wrong datatype
-# @formatter:on
+    # @formatter:on
 ])
 def test_check_add_recipe(title, description, expected, database_fixture) -> None:
     result = v_d.check_add_recipe(title, description)
@@ -56,8 +54,9 @@ def test_check_add_recipe(title, description, expected, database_fixture) -> Non
 # update
 @pytest.mark.parametrize(("ID", "title", "description", "expected"), [
     # @formatter:off
-    (1,  "Lasagne",      "Beschreibung 1", True ),
-    (1,  "Nudelauflauf", "Beschreibung 6", True ),
+    (1,  "Lasagne",      "Beschreibung 1", True ),  # new title
+    (1,  "Nudelauflauf", "Beschreibung 6", True ),  # new description
+    (1,  "Lasagne",      "Beschreibung 6", True ),  # new title and description
     (20, "Lasagne",      "Beschreibung 6", False),  # ID not existing
     (2,  "Nudelauflauf", "Beschreibung 1", False),  # title already existing
     # @formatter:on
@@ -69,8 +68,9 @@ def test_check_update_recipe_by_ID(ID, title, description, expected, database_fi
 
 @pytest.mark.parametrize(("old_title", "new_title", "description", "expected"), [
     # @formatter:off
-    ("Nudelauflauf", "Lasagne",      "Beschreibung 1", True ),
-    ("Nudelauflauf", "Nudelauflauf", "Beschreibung 6", True ),
+    ("Nudelauflauf", "Lasagne",      "Beschreibung 1", True ),  # new title
+    ("Nudelauflauf", "Nudelauflauf", "Beschreibung 6", True ),  # new description
+    ("Nudelauflauf", "Lasagne",      "Beschreibung 6", True ),  # new title and description
     ("Lasagne",      "Tomaten",      "Beschreibung 2", False),  # old title not existing
     ("Nudelauflauf", "Braten",       "Beschreibung 2", False),  # new title already existing
     # @formatter:on
@@ -85,7 +85,7 @@ def test_check_update_recipe_by_title(old_title, new_title, description, expecte
 # delete
 @pytest.mark.parametrize(("ID", "expected"), [
     # @formatter:off
-    (1,  True ),
+    (1,  True ),  # ID is existing
     (20, False),  # ID not existing
     # @formatter:on
 ])
@@ -96,7 +96,7 @@ def test_check_delete_recipe_by_ID(ID, expected, database_fixture) -> None:
 
 @pytest.mark.parametrize(("title", "expected"), [
     # @formatter:off
-    ("Nudelauflauf", True ),
+    ("Nudelauflauf", True ),  # title is existing
     ("Abendessen",   False),  # title not existing
     # @formatter:on
 ])

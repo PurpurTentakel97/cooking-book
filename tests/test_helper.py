@@ -8,7 +8,7 @@ import os
 
 from helper import init
 from database import add as a
-from database import database as d
+from database import my_database as d
 
 # @formatter:off
 entries: dict = {

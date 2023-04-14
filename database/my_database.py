@@ -23,7 +23,7 @@ class Database:
         dirs.check_and_make_dir(dirs.DirType.DATABASE)
 
         if not os.path.exists(my_path):
-            log.message(log.LogType.GENERATED, "database.py", "self.__init__()", "generated new database")
+            log.message(log.LogType.GENERATED, "my_database.py", "self.__init__()", "generated new database")
         self.connection = sqlite3.connect(my_path)
 
         self.connection.execute("PRAGMA foreign_keys = ON")
@@ -35,11 +35,11 @@ class Database:
             try:
                 self.cursor.executescript(file.read())
             except self.OperationalError:
-                log.message(log.LogType.BREAKING_ERROR, "database.py", "self._create_tables()", sys.exc_info())
+                log.message(log.LogType.BREAKING_ERROR, "my_database.py", "self._create_tables()", sys.exc_info())
 
         self.connection.commit()
 
-        log.message(log.LogType.INITIALIZED, "database.py", "self.__init__()", "databased initialized")
+        log.message(log.LogType.INITIALIZED, "my_database.py", "self.__init__()", "databased initialized")
 
     def drop_connection(self) -> None:
         self.connection.close()

@@ -7,7 +7,7 @@
 import sys
 
 from helper import log
-from database.database import Database
+from database.my_database import Database
 from helper import return_message as r_m
 from validation import v_database as v_d
 

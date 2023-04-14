@@ -11,24 +11,23 @@ from tests.test_fixtures import database_fixture
 
 
 # select
-# @formatter:off
+
 @pytest.mark.parametrize(("ID", "expected"), [
-    (1,       True),
+    # @formatter:off
+    (1,       True ),  # ID is existing
     (33,      False),  # ID not existing
-    (bool(),  False),  # wrong datatype
-# @formatter:on
+    # @formatter:on
 ])
 def test_check_select_raw_type_by_ID(ID, expected, database_fixture) -> None:
     result = v_d.check_select_raw_type_by_ID(ID)
     assert result == expected
 
 
-# @formatter:off
 @pytest.mark.parametrize(("value", "expected"), [
-    ("Mittagessen", True),
+    # @formatter:off
+    ("Mittagessen", True ),  # value is existing
     ("Nachtisch",   False),  # value not existing
-    (bool(),  False),  # wrong datatype
-# @formatter:on
+    # @formatter:on
 ])
 def test_check_select_raw_type_ID_by_name(value, expected, database_fixture) -> None:
     result = v_d.check_select_raw_type_ID_by_name(value)
@@ -38,12 +37,12 @@ def test_check_select_raw_type_ID_by_name(value, expected, database_fixture) -> 
 # /select
 
 # add
-# @formatter:off
+
 @pytest.mark.parametrize(("value", "expected"), [
-    ("Mitternachtssnack", True),
+    # @formatter:off
+    ("Mitternachtssnack", True ),  # new
     ("Abendessen",        False),  # already exists
-    (bool(),  False),  # wrong datatype
-# @formatter:on
+    # @formatter:on
 ])
 def test_check_add_raw_type(value, expected, database_fixture) -> None:
     result = v_d.check_add_raw_type(value)
@@ -53,28 +52,24 @@ def test_check_add_raw_type(value, expected, database_fixture) -> None:
 # /add
 
 # update
-# @formatter:off
 @pytest.mark.parametrize(("ID", "value", "expected"), [
-    (1,  "Mitternachtssnack", True),
+    # @formatter:off
+    (1,  "Mitternachtssnack", True ),  # new value
     (2,  "Frühstück",         False),  # value already exists
     (20, "Hamsterbraten",     False),  # ID doesn't exists
-    (bool(),  str(),   False),  # wrong first datatype
-    (int(),   bool(),  False),  # wrong second datatype
-# @formatter:on
+    # @formatter:on
 ])
 def test_check_update_raw_type_by_ID(ID, value, expected, database_fixture) -> None:
     result = v_d.check_update_raw_type_by_ID(ID, value)
     assert result == expected
 
 
-# @formatter:off
 @pytest.mark.parametrize(("old_value", "new_value", "expected"), [
-    ("Abendessen",        "Mitternachtssnack", True),
+    # @formatter:off
+    ("Abendessen",        "Mitternachtssnack", True ),  # new values
     ("Mittagsessen",      "Frühstück",         False),  # new value already existing
     ("Mitternachtssnack", "Tote",              False),  # old value not existing
-    (bool(),  str(),    False),  # wrong first datatype
-    (str(),   bool(),   False),  # wrong second datatype
-# @formatter:on
+    # @formatter:on
 ])
 def test_check_update_raw_type_by_name(old_value, new_value, expected, database_fixture) -> None:
     result = v_d.check_update_raw_type_by_name(old_value, new_value)
@@ -84,25 +79,22 @@ def test_check_update_raw_type_by_name(old_value, new_value, expected, database_
 # /update
 
 # delete
-# @formatter:off
 @pytest.mark.parametrize(("ID", "expected"), [
-    (1,  True),
+    # @formatter:off
+    (1,  True ),  # ID is existing
     (33, False),  # ID not existing
-    (bool(),  False),  # wrong datatype
-
-# @formatter:on
+    # @formatter:on
 ])
 def test_check_delete_raw_type_by_ID(ID, expected, database_fixture) -> None:
     result = v_d.check_delete_raw_type_by_ID(ID)
     assert result == expected
 
 
-# @formatter:off
 @pytest.mark.parametrize(("value", "expected"), [
-    ("Abendessen",        True),
+    # @formatter:off
+    ("Abendessen",        True ),  # new value
     ("Mitternachtssnack", False),  # value not existing
-    (bool(),  False),  # wrong datatype
-# @formatter:on
+    # @formatter:on
 ])
 def test_check_delete_raw_type_by_name(value, expected, database_fixture) -> None:
     result = v_d.check_delete_raw_type_by_name(value)

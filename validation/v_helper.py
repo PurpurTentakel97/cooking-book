@@ -27,7 +27,7 @@ def is_valid_positive_float(value: float) -> bool:
                     f"provided number is no float -> {value}")
         return False
 
-    if value < 0.0:
+    if value <= 0.0:
         log.message(log.LogType.INVALID_ARGUMENT, "v_helper.py", "is_valid_positive_float()",
                     f"provided number is lover that 0.0f -> {value}")
         return False
