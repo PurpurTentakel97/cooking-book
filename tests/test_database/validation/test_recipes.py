@@ -25,8 +25,9 @@ def test_check_select_recipe_by_ID(ID, expected, database_fixture) -> None:
 
 @pytest.mark.parametrize(("title", "expected"), [
     # @formatter:off
-    ("Nudelauflauf", True ),  # title is existing
-    ("Pfannekuchen", False),  # title not existing
+    ("Nudelauflauf",          True ),  # title is existing
+    ("Pfannekuchen",          False),  # title not existing
+    ("    Pfannekuchen     ", False),  # no striping here
     # @formatter:on
 ])
 def test_check_select_recipe_by_title(title, expected, database_fixture) -> None:
@@ -40,9 +41,10 @@ def test_check_select_recipe_by_title(title, expected, database_fixture) -> None
 
 @pytest.mark.parametrize(("title", "description", "expected"), [
     # @formatter:off
-    ("Pfannekuchen", "Beschreibung 6", True),   # new values
-    ("Pfannekuchen", "Beschreibung 1", True),   # new title, existing description
-    ("Nudelauflauf", "Beschreibung 6", False),  # title already existing
+    ("Pfannekuchen",        "Beschreibung 6", True),   # new values
+    ("Pfannekuchen",        "Beschreibung 1", True),   # new title, existing description
+    ("   Pfannekuchen    ", "Beschreibung 6", True),  # no stripping here
+    ("Nudelauflauf",        "Beschreibung 6", False),  # title already existing
     # @formatter:on
 ])
 def test_check_add_recipe(title, description, expected, database_fixture) -> None:
@@ -57,6 +59,7 @@ def test_check_add_recipe(title, description, expected, database_fixture) -> Non
     (1,  "Lasagne",      "Beschreibung 1", True ),  # new title
     (1,  "Nudelauflauf", "Beschreibung 6", True ),  # new description
     (1,  "Lasagne",      "Beschreibung 6", True ),  # new title and description
+    (2,  "   Lasagne  ", "Beschreibung 1", True ),  # no stripping here
     (20, "Lasagne",      "Beschreibung 6", False),  # ID not existing
     (2,  "Nudelauflauf", "Beschreibung 1", False),  # title already existing
     # @formatter:on
@@ -68,11 +71,12 @@ def test_check_update_recipe_by_ID(ID, title, description, expected, database_fi
 
 @pytest.mark.parametrize(("old_title", "new_title", "description", "expected"), [
     # @formatter:off
-    ("Nudelauflauf", "Lasagne",      "Beschreibung 1", True ),  # new title
-    ("Nudelauflauf", "Nudelauflauf", "Beschreibung 6", True ),  # new description
-    ("Nudelauflauf", "Lasagne",      "Beschreibung 6", True ),  # new title and description
-    ("Lasagne",      "Tomaten",      "Beschreibung 2", False),  # old title not existing
-    ("Nudelauflauf", "Braten",       "Beschreibung 2", False),  # new title already existing
+    ("Nudelauflauf", "Lasagne",            "Beschreibung 1", True ),  # new title
+    ("Nudelauflauf", "   Nudelauflauf   ", "Beschreibung 1", True ),  # no stripping here
+    ("Nudelauflauf", "Nudelauflauf",       "Beschreibung 6", True ),  # new description
+    ("Nudelauflauf", "Lasagne",            "Beschreibung 6", True ),  # new title and description
+    ("Lasagne",      "Tomaten",            "Beschreibung 2", False),  # old title not existing
+    ("Nudelauflauf", "Braten",             "Beschreibung 2", False),  # new title already existing
     # @formatter:on
 ])
 def test_check_update_recipe_by_title(old_title, new_title, description, expected, database_fixture) -> None:
@@ -96,8 +100,9 @@ def test_check_delete_recipe_by_ID(ID, expected, database_fixture) -> None:
 
 @pytest.mark.parametrize(("title", "expected"), [
     # @formatter:off
-    ("Nudelauflauf", True ),  # title is existing
-    ("Abendessen",   False),  # title not existing
+    ("Nudelauflauf",       True ),  # title is existing
+    ("   Nudelauflauf   ", False),  # no stripping
+    ("Abendessen",         False),  # title not existing
     # @formatter:on
 ])
 def test_check_delete_recipe_by_title(title, expected, database_fixture) -> None:

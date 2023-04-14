@@ -85,6 +85,7 @@ class Select:
             return r_m.ReturnMessageStr(f"not able to load recipe with ID -> {ID}", False)
 
     def select_recipe_by_title(self, title: str) -> r_m.ReturnMessage:
+        title = title.strip()
         if not v_d.check_select_recipe_by_title(title):
             return r_m.ReturnMessageStr("no valid arguments for select recipe", False)
 

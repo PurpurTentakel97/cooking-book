@@ -85,12 +85,14 @@ def test_select_ingredient_by_ID(ID, ingredient, expected, database_fixture) -> 
 # add
 @pytest.mark.parametrize(("recipy_id", "amount", "unit", "ingredient", "expected"), [
     # @formatter:off
-    (1,  30.0, "g",    "Mehl",   True ),  # new ingredient
-    (1,  30.0, "",     "Mehl",   True ),  # new ingredient with no unit
-    (1,  0.0,  "",     "Mehl",   False),  # no amount
-    (1,  30.0, "test", "",       False),  # no ingredient
-    (20, 1.0,  "test", "test",   False),  # recipe ID not existing
-    (1,  30.0, "",     "Nudeln", False),  # ingredient already exists
+    (1,  30.0, "g",    "Mehl",         True ),  # new ingredient
+    (1,  30.0, "g",    "  Mehl  ",     True ),  # new ingredient with stripping
+    (1,  30.0, "",     "Mehl",         True ),  # new ingredient with no unit
+    (1,  0.0,  "",     "Mehl",         False),  # no amount
+    (1,  30.0, "test", "",             False),  # no ingredient
+    (20, 1.0,  "test", "test",         False),  # recipe ID not existing
+    (1,  30.0, "",     "Nudeln",       False),  # ingredient already exists
+    (1,  30.0, "",     "   Nudeln   ", False),  # ingredient already exists with stripping
     # @formatter:on
 ])
 def test_add_ingredients(recipy_id, amount, unit, ingredient, expected, database_fixture) -> None:
@@ -105,7 +107,7 @@ def test_add_ingredients(recipy_id, amount, unit, ingredient, expected, database
         assert s_recipy_id == recipy_id
         assert s_amount == amount
         assert s_unit == unit
-        assert s_ingredient == ingredient
+        assert s_ingredient == ingredient.strip()
 
 
 # /add
@@ -121,6 +123,7 @@ def test_add_ingredients(recipy_id, amount, unit, ingredient, expected, database
     (1,  0.0,   "ml",        "Milch",          False),  # no amount
     (1,  300.0, "ml",        "",               False),  # no ingredient
     (1,  300.0, "ml",        "Tomaten",        False),  # ingredient already existing in recipe
+    (1,  300.0, "ml",        "  Tomaten  ",    False),  # ingredient already existing in recipe with stripping
     # @formatter:on
 ])
 def test_update_ingredient_by_ID(ID, amount, unit, ingredient, expected, database_fixture) -> None:

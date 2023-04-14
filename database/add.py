@@ -57,6 +57,7 @@ class Add:
 
     # ingredients
     def add_ingredient(self, recipe_id: int, amount: float, unit: str, ingredient: str) -> r_m.ReturnMessage:
+        unit, ingredient = unit.strip(), ingredient.strip()
         if not v_d.check_add_ingredient(recipe_id, amount, unit, ingredient):
             return r_m.ReturnMessageStr("no valid argument to add ingredient", False)
 

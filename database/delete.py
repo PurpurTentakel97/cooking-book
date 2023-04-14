@@ -80,6 +80,7 @@ class Delete:
             return r_m.ReturnMessageStr(f"not able to delete recipe with ID -> {ID}", False)
 
     def delete_recipe_by_title(self, title: str) -> r_m.ReturnMessage:
+        title = title.strip()
         # validate data
         if not v_d.check_delete_recipe_by_title(title):
             return r_m.ReturnMessageStr("no valid arguments fpr deleting recipe", False)

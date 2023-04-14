@@ -42,6 +42,7 @@ def test_check_select_ingredient_by_ID(ID, expected, database_fixture) -> None:
     (1, 3.0,    "",  "Zwiebeln",    True ),  # input without unit
     (20, 150.0, "g", "Tomatenmark", False),  # recipe ID not existing
     (1, 150.0,  "g", "Nudeln",      False),  # ingredient already existing
+    (1, 150.0,  "g", "   Nudeln  ", True ),  # no stripping
     # @formatter:on
 ])
 def test_check_add_ingredient(recipe_id, amount, unit, ingredient, expected, database_fixture) -> None:
@@ -54,12 +55,13 @@ def test_check_add_ingredient(recipe_id, amount, unit, ingredient, expected, dat
 # update
 @pytest.mark.parametrize(("ID", "amount", "unit", "ingredient", "expected"), [
     # @formatter:off
-    (1,  300.0, "ml", "Milch",   True ),  # expected normal input
-    (1,  300.0, ""  , "Milch",   True ),  # normal input without unit
-    (1,  300.0, "ml", "Nudeln",  True ),  # normal input with same ingredient
-    (20, 300.0, "ml", "Milch",   False),  # ID not existing
-    (1,  300.0, "ml", "Tomaten", False),  # ingredient already existing in recipe
-    (1,  0.0,   "ml", "Milch",   False),  # amount of 0.0
+    (1,  300.0, "ml", "Milch",     True ),  # expected normal input
+    (1,  300.0, ""  , "Milch",     True ),  # normal input without unit
+    (1,  300.0, "ml", "Nudeln",    True ),  # normal input with same ingredient
+    (20, 300.0, "ml", "Milch",     False),  # ID not existing
+    (1,  300.0, "ml", "Tomaten",   False),  # ingredient already existing in recipe
+    (1,  300.0, "ml", " Tomaten ", True ),  # no stripping
+    (1,  0.0,   "ml", "Milch",     False),  # amount of 0.0
     # @formatter:on
 ])
 def test_check_update_ingredient_by_ID(ID, amount, unit, ingredient, expected, database_fixture) -> None:

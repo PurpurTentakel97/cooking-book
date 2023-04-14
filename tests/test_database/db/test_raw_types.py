@@ -48,8 +48,9 @@ def test_select_raw_type_by_ID(ID, value, expected, database_fixture) -> None:
 
 @pytest.mark.parametrize(("value", "ID", "expected"), [
     # @formatter:off
-    ("Mittagessen", 2, True ),  # title is existing
-    ("Salat",       0, False),  # title not existing
+    ("Mittagessen",     2, True ),  # title is existing
+    ("  Mittagessen  ", 2, True ),  # title is existing with stripping
+    ("Salat",           0, False),  # title not existing
     # @formatter:on
 ])
 def test_select_raw_type_ID_by_name(value, ID, expected, database_fixture) -> None:
@@ -66,9 +67,10 @@ def test_select_raw_type_ID_by_name(value, ID, expected, database_fixture) -> No
 
 @pytest.mark.parametrize(("value", "expected"), [
     # @formatter:off
-    ("Nachtisch", True ),  # value not existing
-    ("Frühstück", False),  # value already exists
-    (""         , False),  # no value
+    ("Nachtisch",       True ),  # value not existing
+    ("Frühstück",       False),  # value already exists
+    ("   Frühstück   ", False),  # value already exists with stripping
+    (""         ,       False),  # no value
     # @formatter:on
 ])
 def test_add_raw_type(value, expected, database_fixture) -> None:
@@ -78,7 +80,7 @@ def test_add_raw_type(value, expected, database_fixture) -> None:
     if expected:
         s_result = s.select.select_raw_type_by_ID(result.entry)
         assert s_result.valid
-        assert s_result.entry == value
+        assert s_result.entry == value.strip()
 
 
 # /add
@@ -86,10 +88,11 @@ def test_add_raw_type(value, expected, database_fixture) -> None:
 
 @pytest.mark.parametrize(("ID", "value", "expected"), [
     # @formatter:off
-    (1,  "Nachtisch",   True ),  # new value
-    (10, "Nachtisch",   False),  # ID not existing
-    (1,  "Mittagessen", False),  # value already existing
-    (1,  ""           , False),  # no value
+    (1,  "Nachtisch",       True ),  # new value
+    (10, "Nachtisch",       False),  # ID not existing
+    (1,  "Mittagessen",     False),  # value already existing
+    (1,  "  Mittagessen  ", False),  # value already existing with stripping
+    (1,  ""           ,     False),  # no value
     # @formatter:on
 ])
 def test_update_raw_type_by_ID(ID, value, expected, database_fixture) -> None:
@@ -100,7 +103,7 @@ def test_update_raw_type_by_ID(ID, value, expected, database_fixture) -> None:
     assert result.valid == expected
     if expected:
         assert s1_result.valid
-        assert s1_result.entry == value
+        assert s1_result.entry == value.strip()
 
         assert s2_result.valid
         assert s2_result.entry == ID
@@ -108,18 +111,20 @@ def test_update_raw_type_by_ID(ID, value, expected, database_fixture) -> None:
 
 @pytest.mark.parametrize(("old_value", "new_value", "expected"), [
     # @formatter:off
-    ("Frühstück", "Nachtisch",   True ),  # new new_value
-    ("Nachtisch", "Suppe",       False),  # old_value not existing
-    ("Frühstück", "Mittagessen", False),  # new_value already existing
-    ("Frühstück", "",            False),  # no new_value
+    ("Frühstück",  "Nachtisch",       True ),  # new new_value
+    ("  Frühstück  ", "Nachtisch",    True ),  # new new_value with stripping
+    ("Nachtisch",  "Suppe",           False),  # old_value not existing
+    ("Frühstück",  "Mittagessen",     False),  # new_value already existing
+    ("Frühstück",  "  Mittagessen  ", False),  # new_value already existing with stripping
+    ("Frühstück",  "",                False),  # no new_value
     # @formatter:on
 ])
 def test_update_raw_type_by_name(old_value, new_value, expected, database_fixture) -> None:
     result = u.update.update_raw_type_by_name(old_value, new_value)
-    s_result = s.select.select_raw_type_ID_by_name(new_value)
 
     assert result.valid == expected
     if expected:
+        s_result = s.select.select_raw_type_ID_by_name(new_value)
         assert s_result.valid
 
 
@@ -143,8 +148,9 @@ def test_delete_raw_type_by_ID(ID, expected, database_fixture) -> None:
 
 @pytest.mark.parametrize(("value", "expected"), [
     # @formatter:off
-    ("Frühstück", True ),  # value is existing
-    ("Nachtisch", False),  # value not existing
+    ("Frühstück",     True ),  # value is existing
+    ("  Frühstück  ", True ),  # value is existing wist stripping
+    ("Nachtisch",     False),  # value not existing
     # @formatter:on
 ])
 def test_delete_raw_type_by_name(value, expected, database_fixture) -> None:
