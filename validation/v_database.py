@@ -411,4 +411,40 @@ def add_ingredient(recipe_id: int, amount: float, unit: str, ingredient: str) ->
                 f"no recipe with ID found -> {recipe_id}")
     return False
 
+
 # /add
+
+# update
+
+def update_ingredient_by_ID(ID: int, amount: float, unit: str, ingredient: str) -> bool:
+    if not v_h.is_valid_ID(ID):
+        return False
+    if not v_h.is_valid_positive_float(amount):
+        return False
+    if not v_h.is_valid_empty_string(unit):
+        return False
+    if not v_h.is_valid_string(ingredient):
+        return False
+
+    ingredient_result = s.select.select_ingredient_by_ID(ID)
+    if not v_h.is_valid_Return_Message(ingredient_result):
+        log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "update_ingredient_by_ID()", f"ID not valid -> {ID}")
+        return False
+
+    i_ID, i_recipe_ID, i_amount, i_unit, i_ingredient = ingredient_result.entry
+
+    recipe_result = s.select.select_all_ingredients_from_recipe(i_recipe_ID)
+    if not v_h.is_valid_Return_Message(recipe_result):
+        return False
+
+    for s_ID, s_recipe_ID, s_amount, s_unit, s_ingredient in recipe_result.entry:
+        if s_ID == ID:
+            continue
+        if ingredient == s_ingredient:
+            log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "update_ingredient_by_ID()",
+                        f"ingredient already existing in that recipe -> {ingredient}")
+            return False
+
+    return True
+
+# /update

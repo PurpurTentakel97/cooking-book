@@ -105,4 +105,29 @@ def test_add_ingredients(recipy_id, amount, unit, ingredient, expected, database
         assert s_unit == unit
         assert s_ingredient == ingredient
 
+
 # /add
+
+# update
+@pytest.mark.parametrize(("ID", "amount", "unit", "ingredient", "expected"), [
+    # @formatter:off
+    (1, 300.0, "ml", "Milch", True),  # expected normal input
+    (1, 300.0, "", "Milch", True),  # normal input without unit
+    (1, 300.0, "ml   ", "Milch", True),  # normal input with need to strip unit
+    (1, 300.0, "ml", "Milch      ", True),  # normal input with need to strip ingredient
+    (20, 300.0, "ml", "Milch", False),  # ID not existing
+    (1, 300.0, "ml", "Tomaten", False),  # ingredient already existing in recipe
+    # @formatter:on
+])
+def test_update_ingredient_by_ID(ID, amount, unit, ingredient, expected, database_fixture) -> None:
+    result = u.update.update_ingredient_by_ID(ID, amount, unit, ingredient)
+
+    assert result.valid == expected
+    if expected:
+        s_result = s.select.select_ingredient_by_ID(ID)
+        assert s_result.valid
+        s_ID, s_recipy_id, s_amount, s_unit, s_ingredient = s_result.entry
+        assert s_ID == ID
+        assert s_amount == amount
+        assert s_unit == unit.strip()
+        assert s_ingredient == ingredient.strip()

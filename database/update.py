@@ -89,7 +89,28 @@ class Update:
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "update.py", "self.update_recipe_by_title()", sys.exc_info())
             return r_m.ReturnMessageStr(f"not able to update recipe -> {old_title}", False)
+
     # /recipes
+
+    # ingredients
+    def update_ingredient_by_ID(self, ID: int, amount: float, unit: str, ingredient: str) -> r_m.ReturnMessage:
+        unit, ingredient = unit.strip(), ingredient.strip()
+        if not v_d.update_ingredient_by_ID(ID, amount, unit, ingredient):
+            return r_m.ReturnMessageStr("no valid argument for updating recipe", False)
+
+        sql_command: str = f"""UPDATE ingredients SET amount = ?, unit = ?, ingredient = ? WHERE ID is ?;"""
+        try:
+            self.db.cursor.execute(sql_command, (amount, unit, ingredient, ID))
+            self.db.connection.commit()
+
+            log.message(log.LogType.UPDATED, "update.py", "self.update_by_ID()",
+                        f"updated ingredient -> {ingredient}")
+            return r_m.ReturnMessageNone(True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "update.py", "self.update_by_ID()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"not able to update ingredient -> {ingredient}", False)
+
+    # /ingredients
 
 
 def create_update(db: Database):

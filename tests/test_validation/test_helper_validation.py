@@ -7,6 +7,7 @@
 import pytest
 
 from validation import v_helper as v_h
+from helper import return_message as r_m
 
 
 # @formatter:off
@@ -90,4 +91,25 @@ def test_is_valid_string(value, expected) -> None:
 ])
 def test_is_valid_empty_string(value, expected) -> None:
     result = v_h.is_valid_empty_string(value)
+    assert result == expected
+
+
+@pytest.mark.parametrize(("message", "expected"), [
+    # @formatter:off
+    (r_m.ReturnMessage(    True ), True ),
+    (r_m.ReturnMessage(    False), False),
+    (r_m.ReturnMessageNone(True ), True ),
+    (r_m.ReturnMessageNone(False), False),
+    (r_m.ReturnMessageStr(  "",   True ), True ),
+    (r_m.ReturnMessageStr(  "",   False), False),
+    (r_m.ReturnMessageInt(   0,   True ), True ),
+    (r_m.ReturnMessageInt(   0,   False), False),
+    (r_m.ReturnMessageTuple((0,), True ), True ),
+    (r_m.ReturnMessageTuple((0,), False), False),
+    (r_m.ReturnMessageList( [0],  True ), True ),
+    (r_m.ReturnMessageList( [0],  False), False),
+    # @formatter:on
+])
+def test_is_valid_return_message(message, expected) -> None:
+    result = v_h.is_valid_Return_Message(message)
     assert result == expected
