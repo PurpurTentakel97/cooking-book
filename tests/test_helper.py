@@ -60,12 +60,12 @@ entries: dict = {
 # @formatter: on
 
 
-def move_working_directory() -> None:
+def _move_working_directory() -> None:
     os.chdir("D:\\dev\\py\\cooking-book")
 
 
 def generate_temporary_database() -> None:
-    move_working_directory()
+    _move_working_directory()
     init.init(":memory:")
     _add_raw_types_to_database()
     _add_recipes_to_database()
