@@ -599,8 +599,11 @@ def check_add_type(recipe_ID: int, raw_type_ID: int) -> bool:
     return True
 
 # /add
+
 # update
+# no need for validation functions because there are no update methods
 # /update
+
 # delete
 # /delete
 # /types

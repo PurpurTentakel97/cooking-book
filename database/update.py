@@ -112,6 +112,10 @@ class Update:
 
     # /ingredients
 
+    # types
+    # no need to provide update methods for types
+    # /types
+
 
 def create_update(db: Database):
     global update
