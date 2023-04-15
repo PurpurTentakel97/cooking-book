@@ -1,6 +1,6 @@
 #
-# Purpur Tentakel
 # Cooking Book
+# Purpur Tentakel
 # 12.04.2023
 #
 
@@ -143,6 +143,74 @@ class Delete:
             return r_m.ReturnMessageStr(f"not able to delete all ingredients with recipe ID -> {recipe_ID}", False)
 
     # /ingredients
+
+    # types
+    def delete_type_by_ID(self, ID: int) -> r_m.ReturnMessage:
+        if not v_d.check_delete_type_by_ID(ID):
+            return r_m.ReturnMessageStr("no valid arguments for deleting type by ID", False)
+
+        sql_command: str = f"""DELETE FROM types WHERE ID is ?;"""
+        try:
+            self.db.cursor.execute(sql_command, (ID,))
+            self.db.connection.commit()
+
+            log.message(log.LogType.DELETED, "delete.py", "self.delete_type_by_ID()",
+                        f"deleted type with ID -> {ID}")
+            return r_m.ReturnMessageNone(True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "delete.py", "self.delete_type_by_ID()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"not able to delete type with ID -> {ID}", False)
+
+    def delete_type_by_recipe_ID(self, recipe_ID: int) -> r_m.ReturnMessage:
+        if not v_d.check_delete_type_by_recipe_ID(recipe_ID):
+            return r_m.ReturnMessageStr("no valid arguments for deleting type by recipe ID", False)
+
+        sql_command: str = f"""DELETE FROM types WHERE recipe_id is ?;"""
+        try:
+            self.db.cursor.execute(sql_command, (recipe_ID,))
+            self.db.connection.commit()
+
+            log.message(log.LogType.DELETED, "delete.py", "self.delete_type_by_recipe_ID()",
+                        f"deleted all types with recipe ID -> {recipe_ID}")
+            return r_m.ReturnMessageNone(True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "delete.py", "self.delete_type_by_recipe_ID()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"not able to delete all types with recipe ID -> {recipe_ID}", False)
+
+    def delete_type_by_raw_type_ID(self, raw_type_ID: int) -> r_m.ReturnMessage:
+        if not v_d.check_delete_type_by_raw_type_ID(raw_type_ID):
+            return r_m.ReturnMessageStr("no valid arguments for deleting type by raw type ID", False)
+
+        sql_command: str = f"""DELETE FROM types WHERE raw_type_id is ?;"""
+        try:
+            self.db.cursor.execute(sql_command, (raw_type_ID,))
+            self.db.connection.commit()
+
+            log.message(log.LogType.DELETED, "delete.py", "self.delete_type_by_raw_type_ID()",
+                        f"deleted all types with raw type ID -> {raw_type_ID}")
+            return r_m.ReturnMessageNone(True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "delete.py", "self.delete_type_by_raw_type_ID()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"not able to delete all types with raw type ID -> {raw_type_ID}", False)
+
+    def delete_type_by_recipe_ID_and_raw_type_ID(self, recipe_ID: int, raw_type_ID: int) -> r_m.ReturnMessage:
+        if not v_d.check_delete_type_by_recipe_ID_and_raw_type_ID(recipe_ID, raw_type_ID):
+            return r_m.ReturnMessageStr("no valid arguments for deleting type by recipe ID and raw type ID", False)
+
+        sql_command: str = f"""DELETE FROM types WHERE recipe_id is ? and raw_type_id is ?;"""
+        try:
+            self.db.cursor.execute(sql_command, (recipe_ID, raw_type_ID))
+            self.db.connection.commit()
+
+            log.message(log.LogType.DELETED, "delete.py", "self.delete_type_by_recipe_ID_and_raw_type_ID()",
+                        f"deleted type with recipe ID and raw type ID -> {recipe_ID} | {raw_type_ID}")
+            return r_m.ReturnMessageNone(True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "delete.py", "self.delete_type_by_recipe_ID_and_raw_type_ID()", sys.exc_info())
+            return r_m.ReturnMessageStr(
+                f"not able to delete type with recipe ID and  raw type ID -> {recipe_ID} | {raw_type_ID}", False)
+
+    # /types
 
 
 def create_delete(db: Database):

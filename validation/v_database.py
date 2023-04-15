@@ -598,6 +598,7 @@ def check_add_type(recipe_ID: int, raw_type_ID: int) -> bool:
 
     return True
 
+
 # /add
 
 # update
@@ -605,5 +606,112 @@ def check_add_type(recipe_ID: int, raw_type_ID: int) -> bool:
 # /update
 
 # delete
+
+def check_delete_type_by_ID(ID: int) -> bool:
+    if not v_h.is_valid_ID(ID):
+        return False
+
+    result = s.select.select_all_types()
+    if not v_h.is_valid_Return_Message(result):
+        return False
+
+    for s_ID, *_ in result.entry:
+        if s_ID == ID:
+            return True
+
+    log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "check_delete_type_by_ID()",
+                f"no type with ID found -> {ID}")
+    return False
+
+
+def check_delete_type_by_recipe_ID(recipe_ID: int) -> bool:
+    if not v_h.is_valid_ID(recipe_ID):
+        return False
+
+    result = s.select.select_all_recipes()
+    if not v_h.is_valid_Return_Message(result):
+        return False
+
+    for ID, *_ in result.entry:
+        if ID == recipe_ID:
+            return True
+
+    log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "check_delete_type_by_recipe_ID()",
+                f"no recipe with ID found -> {recipe_ID}")
+    return False
+
+
+def check_delete_type_by_raw_type_ID(raw_type_ID: int) -> bool:
+    if not v_h.is_valid_ID(raw_type_ID):
+        return False
+
+    result = s.select.select_all_raw_types()
+    if not v_h.is_valid_Return_Message(result):
+        return False
+
+    for ID, *_ in result.entry:
+        if ID == raw_type_ID:
+            return True
+
+    log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "check_delete_type_by_raw_type_ID()",
+                f"no raw type with ID found -> {raw_type_ID}")
+    return False
+
+
+def check_delete_type_by_recipe_ID_and_raw_type_ID(recipe_ID: int, raw_type_ID: int) -> bool:
+    if not v_h.is_valid_ID(recipe_ID):
+        return False
+    if not v_h.is_valid_ID(raw_type_ID):
+        return False
+
+    # check recipe
+    ID_found: bool = False
+    result = s.select.select_all_recipes()
+    if not v_h.is_valid_Return_Message(result):
+        return False
+
+    for ID, *_ in result.entry:
+        if ID == recipe_ID:
+            ID_found = True
+            break
+
+    if not ID_found:
+        log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "check_delete_type_by_recipe_ID_and_raw_type_ID()",
+                    f"no recipe with ID found -> {recipe_ID}")
+        return False
+
+    # check raw type
+    ID_found = False
+    result = s.select.select_all_raw_types()
+    if not v_h.is_valid_Return_Message(result):
+        return False
+
+    for ID, *_ in result.entry:
+        if ID == raw_type_ID:
+            ID_found = True
+            break
+
+    if not ID_found:
+        log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "check_delete_type_by_recipe_ID_and_raw_type_ID()",
+                    f"no raw type with ID found -> {raw_type_ID}")
+        return False
+
+    # check types
+    ID_found = False
+    result = s.select.select_all_types()
+    if not v_h.is_valid_Return_Message(result):
+        return False
+
+    for _, s_recipe_ID, s_raw_type_ID in result.entry:
+        if s_recipe_ID == recipe_ID and s_raw_type_ID == raw_type_ID:
+            ID_found = True
+
+    if not ID_found:
+        log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "check_delete_type_by_recipe_ID_and_raw_type_ID()",
+                    f"no type with recipe ID and raw type ID found -> {recipe_ID} | {raw_type_ID}")
+        return False
+
+    return True
+
 # /delete
 # /types
