@@ -125,7 +125,7 @@ class Select:
             return r_m.ReturnMessageList(result, True)
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "select.py", "self.select_all_ingredients_from_recipe()", sys.exc_info())
-            return r_m.ReturnMessageStr(f"could not load all ingredients from recipe ID ->{recipe_ID}")
+            return r_m.ReturnMessageStr(f"could not load all ingredients from recipe ID ->{recipe_ID}", False)
 
     def select_ingredient_by_ID(self, ID: int) -> r_m.ReturnMessage:
         if not v_d.check_select_ingredient_by_ID(ID):
@@ -139,9 +139,66 @@ class Select:
             return r_m.ReturnMessageTuple(result, True)
         except self.db.OperationalError:
             log.error(log.LogType.ERROR, "select.py", "self.select_ingredient_by_ID()", sys.exc_info())
-            return r_m.ReturnMessageStr(f"could not load ingredient from ID ->{ID}")
+            return r_m.ReturnMessageStr(f"could not load ingredient from ID ->{ID}", False)
 
     # /ingredients
+
+    # types
+
+    def select_all_types(self) -> r_m.ReturnMessage:
+        sql_command: str = f"""SELECT ID, recipe_ID, raw_type_ID FROM types ORDER BY recipe_ID ASC;"""
+        try:
+            result = self.db.cursor.execute(sql_command).fetchall()
+            log.message(log.LogType.LOADED, "select.py", "self.select_all_types()",
+                        f"selected all types -> {result}")
+            return r_m.ReturnMessageList(result, True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "select.py", "self.select_all_types()", sys.exc_info())
+            return r_m.ReturnMessageStr("could not load all types", False)
+
+    def select_type_by_ID(self, ID: int) -> r_m.ReturnMessage:
+        if not v_d.check_select_type_by_ID(ID):
+            return r_m.ReturnMessageStr("no valid arguments to select type by ID", False)
+
+        sql_command: str = f"""SELECT ID, recipe_id, raw_type_id FROM types WHERE ID is ?;"""
+        try:
+            result = self.db.cursor.execute(sql_command, (ID,)).fetchone()
+            log.message(log.LogType.LOADED, "select.py", "self.select_type_by_ID()",
+                        f"selected type by ID -> {result}")
+            return r_m.ReturnMessageTuple(result, True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "select.py", "self.select_type_by_ID()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"could not load type by ID -> {ID}", False)
+
+    def select_type_by_recipe_ID(self, recipe_ID: int) -> r_m.ReturnMessage:
+        if not v_d.check_select_type_by_recipe_ID(recipe_ID):
+            return r_m.ReturnMessageStr("no valid arguments to select types by recipe ID", False)
+
+        sql_command: str = f"""SELECT ID, recipe_id, raw_type_id FROM types WHERE recipe_ID is ? ORDER BY raw_type_ID ASC;"""
+        try:
+            result = self.db.cursor.execute(sql_command, (recipe_ID,)).fetchall()
+            log.message(log.LogType.LOADED, "select.py", "self.select_type_by_recipe_ID()",
+                        f"selected types by recipe ID -> {result}")
+            return r_m.ReturnMessageList(result, True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "select.py", "self.select_type_by_recipe_ID()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"could not load types by recipe ID -> {recipe_ID}", False)
+
+    def select_type_by_raw_type_ID(self, raw_type_ID: int) -> r_m.ReturnMessage:
+        if not v_d.check_select_type_by_raw_type_ID(raw_type_ID):
+            return r_m.ReturnMessageStr("no valid arguments to select types by raw Type ID", False)
+
+        sql_command: str = f"""SELECT ID, recipe_id, raw_type_id FROM types WHERE raw_type_ID is ? ORDER BY recipe_ID ASC;"""
+        try:
+            result = self.db.cursor.execute(sql_command, (raw_type_ID,)).fetchall()
+            log.message(log.LogType.LOADED, "select.py", "self.select_type_by_raw_type_ID()",
+                        f"selected types by raw type ID -> {result}")
+            return r_m.ReturnMessageList(result, True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "select.py", "self.select_type_by_raw_type_ID()", sys.exc_info())
+            return r_m.ReturnMessageStr(f"could not load types by raw type ID -> {raw_type_ID}", False)
+
+    # /types
 
 
 def create_select(db: Database):

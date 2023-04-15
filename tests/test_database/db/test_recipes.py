@@ -49,7 +49,8 @@ def test_select_recipe_by_ID(ID, title, description, expected, database_fixture)
 
     assert result.valid == expected
     if expected:
-        _, s_title, s_description = result.entry
+        s_ID, s_title, s_description = result.entry
+        assert s_ID == ID
         assert s_title == title
         assert s_description == description
 

@@ -72,6 +72,22 @@ class Add:
             return r_m.ReturnMessageStr(f" not able to add new ingredient -> {ingredient}", False)
 
     # /ingredients
+    # types
+    def add_type(self, recipe_ID: int, raw_type_ID: int) -> r_m.ReturnMessage:
+        if not v_d.check_add_type(recipe_ID, raw_type_ID):
+            return r_m.ReturnMessageStr("no valid arguments to add a new type", False)
+
+        sql_command: str = f"""INSERT INTO types (recipe_ID, raw_type_ID) VALUES (?, ?);"""
+        try:
+            self.db.cursor.execute(sql_command, (recipe_ID, raw_type_ID))
+            self.db.connection.commit()
+            log.message(log.LogType.SAVED, "add.py", "self.add_type()", f"add new type ID -> {raw_type_ID}")
+            return r_m.ReturnMessageInt(self.db.cursor.lastrowid, True)
+        except self.db.OperationalError:
+            log.error(log.LogType.ERROR, "add.py", "self.add_type()", sys.exc_info())
+            return r_m.ReturnMessageStr(f" not able to add new type -> {raw_type_ID}", False)
+
+    # /types
 
 
 def create_add(db: Database):

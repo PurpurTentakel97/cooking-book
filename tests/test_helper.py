@@ -43,6 +43,18 @@ entries: dict = {
         [5, 1000.0, "g",  "Mehl"         ],  # 12
         [5, 600.0,  "ml", "Wasser"       ],  # 13
         [5, 10.5,   "g",  "Trocken Hefe" ],  # 14
+    ],
+    "types": [
+        [1, 2],  #  1  Nudelauflauf    Mittagessen
+        [1, 3],  #  2  Nudelauflauf    Abendessen
+        [2, 2],  #  3  Braten          Mittagessen
+        [2, 3],  #  4  Braten          Abendessen
+        [3, 3],  #  5  Schokopuddung   Abendessen
+        [3, 1],  #  6  Schokopudding   Frühstück
+        [4, 1],  #  7  Salat           Frühstück
+        [4, 2],  #  8  Salat           Mittagessen
+        [5, 1],  #  9  Brot            Frühstück
+        [5, 3],  # 10  Brot            Abendessen
     ]
 }
 # @formatter: on
@@ -58,6 +70,7 @@ def generate_temporary_database() -> None:
     _add_raw_types_to_database()
     _add_recipes_to_database()
     _add_ingredients_to_database()
+    _add_types_to_database()
 
 
 def _add_raw_types_to_database() -> None:
@@ -73,6 +86,11 @@ def _add_recipes_to_database() -> None:
 def _add_ingredients_to_database() -> None:
     for recipe_id, amount, unit, ingredient in entries["ingredients"]:
         a.add.add_ingredient(recipe_id, amount, unit, ingredient)
+
+
+def _add_types_to_database() -> None:
+    for recipe_ID, raw_type_ID in entries["types"]:
+        a.add.add_type(recipe_ID, raw_type_ID)
 
 
 def delete_temporary_database() -> None:
