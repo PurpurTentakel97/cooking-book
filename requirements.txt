@@ -1,6 +1,6 @@
 # Purpur Tentakel
-# 21.01.2022
-# VereinsManager // requirements
+# 12.04.2023
+# Cooking Book // requirements
 
 PyQt5
 reportlab
