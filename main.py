@@ -5,14 +5,9 @@
 # 11.04.2023
 #
 
-from helper import log
-import time
+from UI import MainWindow
 
 if __name__ == "__main__":
-    log.message(log.LogType.INFO, "main.py", "__name__ == __main__()", "info text")
-    time.sleep(2)
-    log.message(log.LogType.INFO, "main.py", "__name__ == __main__()", "info text")
-    time.sleep(2)
-    log.message(log.LogType.INFO, "main.py", "__name__ == __main__()", "info text")
-
-    log.export()
+    MainWindow.create_application()
+    MainWindow.create_window()
+    MainWindow.start_application()
