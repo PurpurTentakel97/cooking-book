@@ -58,9 +58,14 @@ class _Log:
 
 _logs: list[_Log, ...] = list()
 _log_file_name: str = ""
+_is_exporting: bool = True
 
 
 def _create_log_file() -> None:
+    global _is_exporting
+    if not _is_exporting:
+        return
+
     dirs.check_and_make_dir(dirs.DirType.LOGS)
 
     global _log_file_name
@@ -90,6 +95,10 @@ def error(log_type: LogType, file: str, function: str, error_tuple: tuple) -> No
 
 
 def export(printing: bool = False) -> None:
+    global _is_exporting
+    if not _is_exporting:
+        return
+
     out: list[dict[str, str]] = list()
     global _log_file_name
     if len(_log_file_name) == 0:
@@ -108,3 +117,8 @@ def export(printing: bool = False) -> None:
 
     if printing:
         print(out)
+
+
+def _set_exporting(is_exporting:bool):
+    global _is_exporting
+    _is_exporting = is_exporting

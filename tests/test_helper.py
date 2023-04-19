@@ -6,6 +6,7 @@
 
 import os
 
+from helper import log
 from helper import init
 from database import add as a
 from database import my_database as d
@@ -66,6 +67,7 @@ def _move_working_directory() -> None:
 
 def generate_temporary_database() -> None:
     _move_working_directory()
+    log._set_exporting(False)
     init.init(":memory:")
     _add_raw_types_to_database()
     _add_recipes_to_database()
