@@ -1,6 +1,6 @@
 #
 # Purpur Tentakel
-# Cocking Book
+# Cooking Book
 # 12.04.2023
 #
 
@@ -10,21 +10,31 @@ from enum import Enum
 from helper import log
 
 
+# @formatter:off
 class DirType(Enum):
-    SAVES = "saves"
-    LOGS = "logs"
+    SAVES =         "saves"
+    LOGS =          "logs"
+    DATABASE =      "database"
+    CONFIG =        "config"
 
 
 class FileType(Enum):
-    LOG = ".CB_LOG"
+    LOG_ENDING =      ".CB_LOG"
+    DATABASE =        "recipes.CB_DB"
+    DATABASE_CONFIG = "create.sql"
+# @formatter:on
 
 
-def _get_dir_from_enum(path_type: DirType) -> str:
+def get_dir_from_enum(path_type: DirType) -> str:
     match path_type:
         case DirType.SAVES:
-            return f"{DirType.SAVES.value}"
+            return os.path.join(os.getcwd(), DirType.SAVES.value)
         case DirType.LOGS:
-            return f"{DirType.SAVES.value}/{DirType.LOGS.value}"
+            return os.path.join(os.getcwd(), DirType.SAVES.value, DirType.LOGS.value)
+        case DirType.DATABASE:
+            return os.path.join(os.getcwd(), DirType.SAVES.value, DirType.DATABASE.value)
+        case DirType.CONFIG:
+            return os.path.join(os.getcwd(), DirType.CONFIG.value)
 
 
 def _create_dir(my_path: str) -> bool:
@@ -42,11 +52,13 @@ def _create_dir(my_path: str) -> bool:
 
 
 def check_and_make_dir(dir_type: DirType) -> bool:
-    my_path: str = _get_dir_from_enum(dir_type)
+    my_path: str = get_dir_from_enum(dir_type)
     return _create_dir(my_path)
 
 
 def get_dir_from_file(file_type: FileType) -> str:
     match file_type:
-        case FileType.LOG:
-            return _get_dir_from_enum(DirType.LOGS)
+        case FileType.LOG_ENDING:
+            return get_dir_from_enum(DirType.LOGS)
+        case FileType.DATABASE:
+            return get_dir_from_enum(DirType.DATABASE)

@@ -1,12 +1,12 @@
 #
 # Purpur Tentakel
-# Cocking Book
+# Cooking Book
 # 12.04.2023
 #
+
 import os.path
 from enum import Enum
 from datetime import datetime
-from typing import TextIO
 
 from helper import dirs
 import json
@@ -14,18 +14,21 @@ import json
 
 # @formatter:off
 class LogType(Enum):
-    DEBUG =           "DEBUG             ",
-    INFO =            "INFO              ",
+    DEBUG =            "DEBUG             "
+    INFO =             "INFO              "
 
-    SAVED =           "SAVED             ",
-    LOADED =          "LOADED            ",
-    GENERATED =       "GENERATED         ",
+    SAVED =            "SAVED             "
+    LOADED =           "LOADED            "
+    UPDATED =          "UPDATED           "
+    DELETED =          "DELETED           "
+    GENERATED =        "GENERATED         "
+    INITIALIZED =      "INITIALIZED       "
 
-    INVALID_ARGUMENT = "INVALID ARGUMENT "
+    INVALID_ARGUMENT = "INVALID ARGUMENT  "
 
-    BREAKING_ERROR =  "[[ERROR BREAKING]]",
-    ERROR =           "[ERROR]           ",
-    EXPECTED_ERROR =  "ERROR EXPECTED    ",
+    BREAKING_ERROR =   "[[ERROR BREAKING]]"
+    ERROR =            "[ERROR]           "
+    EXPECTED_ERROR =   "ERROR EXPECTED    "
 # @formatter:on
 
 
@@ -38,7 +41,7 @@ class _Log:
         self.text: str = text
 
     def __str__(self):
-        return f"[{self.date_as_string()}] | {self.log_type.value[0]} | {self.file}.{self.function} | {self.text}"
+        return f"[{self.date_as_string()}] | {self.log_type.value} | {self.file}.{self.function} | {self.text}"
 
     def date_as_string(self):
         return self.timestamp.strftime("%d-%m-%Y %H:%M:%S")
@@ -46,7 +49,7 @@ class _Log:
     def as_dict(self) -> dict[str, str]:
         return {
             "date": self.date_as_string(),
-            "log type": self.log_type.value[0].strip(),
+            "log type": self.log_type.value.strip(),
             "file": self.file,
             "function": self.function,
             "text": self.text
@@ -55,18 +58,23 @@ class _Log:
 
 _logs: list[_Log, ...] = list()
 _log_file_name: str = ""
+_is_exporting: bool = True
 
 
 def _create_log_file() -> None:
+    global _is_exporting
+    if not _is_exporting:
+        return
+
     dirs.check_and_make_dir(dirs.DirType.LOGS)
 
     global _log_file_name
     if os.path.exists(_log_file_name):
         return
 
-    log_dir_name: str = dirs.get_dir_from_file(dirs.FileType.LOG)
+    log_dir_name: str = dirs.get_dir_from_file(dirs.FileType.LOG_ENDING)
     _log_file_name = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-    _log_file_name = f"{log_dir_name}/{_log_file_name}{dirs.FileType.LOG.value}"
+    _log_file_name = f"{log_dir_name}\\{_log_file_name}{dirs.FileType.LOG_ENDING.value}"
 
     with open(_log_file_name, "w") as _:
         var = None
@@ -81,8 +89,16 @@ def message(log_type: LogType, file: str, function: str, text: str) -> None:
     export()
 
 
+def error(log_type: LogType, file: str, function: str, error_tuple: tuple) -> None:
+    error_str: str = f"{error_tuple[0]} | {error_tuple[1]} | {error_tuple[2]}"
+    message(log_type, file, function, error_str)
+
 
 def export(printing: bool = False) -> None:
+    global _is_exporting
+    if not _is_exporting:
+        return
+
     out: list[dict[str, str]] = list()
     global _log_file_name
     if len(_log_file_name) == 0:
@@ -101,3 +117,8 @@ def export(printing: bool = False) -> None:
 
     if printing:
         print(out)
+
+
+def _set_exporting(is_exporting:bool):
+    global _is_exporting
+    _is_exporting = is_exporting

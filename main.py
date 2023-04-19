@@ -1,6 +1,6 @@
 #
 # Purpur Tentakel
-# Cocking Book
+# Cooking Book
 # Python 3.11
 # 11.04.2023
 #
