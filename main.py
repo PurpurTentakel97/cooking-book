@@ -5,9 +5,9 @@
 # 11.04.2023
 #
 
-from UI import MainWindow
+from UI import MyUI
 
 if __name__ == "__main__":
-    MainWindow.create_application()
-    MainWindow.create_window()
-    MainWindow.start_application()
+    MyUI.create_application()
+    MyUI.create_window()
+    MyUI.start_application()
