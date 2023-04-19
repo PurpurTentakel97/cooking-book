@@ -62,7 +62,7 @@ entries: dict = {
 
 
 def _move_working_directory() -> None:
-    os.chdir("D:\\dev\\py\\cooking-book")
+    os.chdir("D:/dev/py/cooking-book")
 
 
 def generate_temporary_database() -> None:
