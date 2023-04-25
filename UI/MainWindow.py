@@ -6,6 +6,7 @@
 
 from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QVBoxLayout, QGridLayout, QWidget
 from PyQt5.QtWidgets import QLineEdit, QPushButton, QListWidget, QListWidgetItem, QTextEdit, QLabel
+from UI.RawTypesWindow import RawTypesWindow
 
 
 class MainWindow(QMainWindow):
@@ -14,6 +15,8 @@ class MainWindow(QMainWindow):
 
         self._init_UI()
         self._ini_layout()
+
+        self._raw_types_window: RawTypesWindow | None = None
 
     def _init_UI(self) -> None:
         self.setWindowTitle("Cooking Book - Purpur Tentakel")
@@ -29,6 +32,7 @@ class MainWindow(QMainWindow):
         self._title.setPlaceholderText("title")
         self._title_label: QLabel = QLabel("title:")
         self._types_button: QPushButton = QPushButton("types")
+        self._types_button.clicked.connect(self._set_raw_type_window)
         self._types_search: QLineEdit = QLineEdit()
         self._types_search.setPlaceholderText("types search")
         self._types_label: QLabel = QLabel("types:")
@@ -99,3 +103,6 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(1280, 720)
         self.showMaximized()
         self.show()
+
+    def _set_raw_type_window(self) -> None:
+        self._raw_types_window = RawTypesWindow()
