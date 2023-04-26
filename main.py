@@ -5,9 +5,8 @@
 # 11.04.2023
 #
 
-from UI import MyUI
+from helper import init, dirs
+import os
 
 if __name__ == "__main__":
-    MyUI.create_application()
-    MyUI.create_window()
-    MyUI.start_application()
+    init.init(os.path.join(dirs.get_dir_from_enum(dirs.DirType.DATABASE), dirs.FileType.DATABASE.value))
