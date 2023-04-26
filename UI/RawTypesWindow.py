@@ -22,8 +22,9 @@ class RawTypeEntry(QListWidgetItem):
 
 
 class RawTypesWindow(QWidget):
-    def __init__(self) -> None:
+    def __init__(self, close_callback) -> None:
         super().__init__()
+        self._close_callback = close_callback
 
         self._initialize()
         self._setLayout()
@@ -141,3 +142,7 @@ class RawTypesWindow(QWidget):
         msg.setWindowTitle("Error")
         msg.setText(message)
         x = msg.exec_()
+
+    def closeEvent(self, event) -> None:
+        self._close_callback()
+        event.accept()

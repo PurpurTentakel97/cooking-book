@@ -68,7 +68,7 @@ def _move_working_directory() -> None:
 def generate_temporary_database() -> None:
     _move_working_directory()
     log._set_exporting(False)
-    init.init(":memory:")
+    init.data_init(":memory:")
     _add_raw_types_to_database()
     _add_recipes_to_database()
     _add_ingredients_to_database()
