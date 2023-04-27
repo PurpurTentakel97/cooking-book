@@ -76,10 +76,10 @@ class RawTypesWindow(QWidget):
             self._list.addItem(entry)
 
     def _list_clicked(self) -> None:
-        current_item: list[RawTypeEntry, ...] = self._list.selectedItems()
+        current_item: RawTypeEntry = self._list.currentItem()
         if not current_item:
             return
-        current_item: RawTypeEntry = current_item[0]
+
         self._input.setText(current_item.entry)
         self._delete_btn.setEnabled(True)
 
@@ -87,20 +87,30 @@ class RawTypesWindow(QWidget):
         self._clear()
 
     def _accept_clicked(self) -> None:
-        current_item: list[RawTypeEntry, ...] = self._list.selectedItems()
+        current_item: RawTypeEntry = self._list.currentItem()
         if not current_item:
             self._add_type(self._input.text())
             return
 
-        current_item: RawTypeEntry = current_item[0]
         self._update_type(current_item.ID, self._input.text())
 
     def _delete_clicked(self) -> None:
-        current_item: list[RawTypeEntry, ...] = self._list.selectedItems()
+        current_item: RawTypeEntry = self._list.currentItem()
         if not current_item:
             self._display_message("no entry selected")
             return
-        current_item: RawTypeEntry = current_item[0]
+
+        msg: QMessageBox = QMessageBox()
+        msg.setWindowTitle("Delete?")
+        msg.setText(f"Do you wan to delete {current_item.entry}")
+        msg.setInformativeText("when an type gets deleted it will be deleted from all recipes.")
+        msg.setStandardButtons(QMessageBox.Cancel | QMessageBox.Ok)
+        msg.setDefaultButton(QMessageBox.Cancel)
+        result = msg.exec_()
+
+        if result != QMessageBox.Ok:
+            return
+
         self._delete_type(current_item.ID)
 
     def _add_type(self, new_type: str) -> None:
@@ -120,6 +130,7 @@ class RawTypesWindow(QWidget):
         self._load_raw_types()
 
     def _delete_type(self, ID: int) -> None:
+
         result = d.delete.delete_raw_type_by_ID(ID)
         if not result.valid:
             self._display_message(result.entry)
