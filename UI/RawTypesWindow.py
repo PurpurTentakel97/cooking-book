@@ -100,15 +100,8 @@ class RawTypesWindow(QWidget):
             self._display_message("no entry selected")
             return
 
-        msg: QMessageBox = QMessageBox()
-        msg.setWindowTitle("Delete?")
-        msg.setText(f"Do you wan to delete {current_item.entry}")
-        msg.setInformativeText("when an type gets deleted it will be deleted from all recipes.")
-        msg.setStandardButtons(QMessageBox.Cancel | QMessageBox.Ok)
-        msg.setDefaultButton(QMessageBox.Cancel)
-        result = msg.exec_()
-
-        if result != QMessageBox.Ok:
+        if not self._display_accept_message("Delete?", f"Do you wan to delete {current_item.entry}",
+                                            "when an type gets deleted it will be deleted from all recipes."):
             return
 
         self._delete_type(current_item.ID)
@@ -153,6 +146,18 @@ class RawTypesWindow(QWidget):
         msg.setWindowTitle("Error")
         msg.setText(message)
         x = msg.exec_()
+
+    @staticmethod
+    def _display_accept_message(title: str, message: str, sub_message: str) -> bool:
+        msg: QMessageBox = QMessageBox()
+        msg.setWindowTitle(title)
+        msg.setText(message)
+        msg.setInformativeText(sub_message)
+        msg.setStandardButtons(QMessageBox.Cancel | QMessageBox.Ok)
+        msg.setDefaultButton(QMessageBox.Cancel)
+        result = msg.exec_()
+
+        return result == QMessageBox.Ok
 
     def closeEvent(self, event) -> None:
         self._close_callback()

@@ -256,6 +256,10 @@ class MainWindow(QMainWindow):
         if not current_item:
             self._display_message("no selected recipe to delete")
             return
+
+        if not self._display_accept_message("Delete?", f"Do you want to delete {current_item.title}", str()):
+            return
+
         result = d.delete.delete_recipe_by_ID(current_item.ID)
 
         if not result.valid:
@@ -391,3 +395,15 @@ class MainWindow(QMainWindow):
         msg.setWindowTitle("Error")
         msg.setText(message)
         x = msg.exec_()
+
+    @staticmethod
+    def _display_accept_message(title: str, message: str, sub_message: str) -> bool:
+        msg: QMessageBox = QMessageBox()
+        msg.setWindowTitle(title)
+        msg.setText(message)
+        msg.setInformativeText(sub_message)
+        msg.setStandardButtons(QMessageBox.Cancel | QMessageBox.Ok)
+        msg.setDefaultButton(QMessageBox.Cancel)
+        result = msg.exec_()
+
+        return result == QMessageBox.Ok
