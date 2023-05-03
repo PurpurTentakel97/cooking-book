@@ -153,6 +153,7 @@ class MainWindow(QMainWindow):
         self._add_ingredient_btn.setEnabled(False)
         self._add_ingredient_btn.clicked.connect(self._add_ingredient)
         self._ingredients_list: QListWidget = QListWidget()
+        self._ingredients_list.currentItemChanged.connect(self._clicked_ingredient)
 
         # right
         self._recipe_entry_label: QLabel = QLabel("recipe:")
@@ -381,6 +382,21 @@ class MainWindow(QMainWindow):
             if not selected:
                 current_type.set_selected(False)
 
+    def _load_ingredients(self, recipe: RecipeItem) -> None:
+        self._ingredients_list.clear()
+
+        result = s.select.select_all_ingredients_from_recipe(recipe.ID)
+        if not result.valid:
+            self._display_message(result.entry)
+            return
+
+        for ID, _, amount, unit, ingredient in result.entry:
+            amount: str = str(amount)
+            item: IngredientItem = IngredientItem(ID, amount, unit, ingredient)
+            self._ingredients_list.addItem(item)
+
+        self._clear_cancel_ingredients()
+
     # clear
     def _clear_type_search(self) -> None:
         self._types_search_le.clear()
@@ -439,6 +455,15 @@ class MainWindow(QMainWindow):
 
         self._types_list.clearSelection()
 
+    def _clicked_ingredient(self) -> None:
+        current_ingredient: IngredientItem = self._ingredients_list.currentItem()
+        if not current_ingredient:
+            return
+
+        self._amount_le.setText(current_ingredient.amount)
+        self._unit_le.setText(current_ingredient.unit)
+        self._ingredient_le.setText(current_ingredient.ingredient)
+
     # chanced
     def _chanced_recipe(self) -> None:
         current_recipe: RecipeItem = self._recipes_list.currentItem()
@@ -448,6 +473,7 @@ class MainWindow(QMainWindow):
         self._title_le.setText(current_recipe.title)
         self._recipe_entry_te.setText(current_recipe.description)
         self._load_types(current_recipe)
+        self._load_ingredients(current_recipe)
 
     def _chanced_recipe_search(self) -> None:
         current_text: str = self._recipe_search_le.text().strip()
