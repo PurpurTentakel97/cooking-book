@@ -147,13 +147,15 @@ class MainWindow(QMainWindow):
         self._ingredient_le.returnPressed.connect(self._add_ingredient)
         self._delete_ingredient_btn: QPushButton = QPushButton("delete")
         self._delete_ingredient_btn.setEnabled(False)
+        self._delete_ingredient_btn.clicked.connect(self._delete_ingredient)
         self._cancel_ingredient_btn: QPushButton = QPushButton("cancel")
         self._cancel_ingredient_btn.clicked.connect(self._clear_cancel_ingredients)
         self._add_ingredient_btn: QPushButton = QPushButton("commit")
         self._add_ingredient_btn.setEnabled(False)
         self._add_ingredient_btn.clicked.connect(self._add_ingredient)
         self._ingredients_list: QListWidget = QListWidget()
-        self._ingredients_list.currentItemChanged.connect(self._clicked_ingredient)
+        self._ingredients_list.currentItemChanged.connect(self._chanced_ingredient)
+        self._ingredients_list.itemClicked.connect(self._clicked_ingredient)
 
         # right
         self._recipe_entry_label: QLabel = QLabel("recipe:")
@@ -340,6 +342,20 @@ class MainWindow(QMainWindow):
         self._recipes_list.takeItem(self._recipes_list.row(current_item))
         self._check_valid_recipe()
 
+    def _delete_ingredient(self) -> None:
+        current_ingredient: IngredientItem = self._ingredients_list.currentItem()
+        if not current_ingredient:
+            return
+
+        result = d.delete.delete_ingredient_by_ID(current_ingredient.ID)
+        if not result.valid:
+            self._display_message(result.entry)
+            return
+
+        self._ingredients_list.takeItem(self._ingredients_list.row(current_ingredient))
+        self._delete_ingredient_btn.setEnabled(False)
+        self._clear_cancel_ingredients()
+
     # load
     def _load_raw_types(self) -> None:
         result = s.select.select_all_raw_types()
@@ -409,6 +425,7 @@ class MainWindow(QMainWindow):
         self._unit_le.clear()
         self._ingredient_le.clear()
         self._ingredients_list.clearSelection()
+        self._delete_ingredient_btn.setEnabled(False)
 
     # clicked
     def _clicked_save_title(self) -> None:
@@ -456,13 +473,7 @@ class MainWindow(QMainWindow):
         self._types_list.clearSelection()
 
     def _clicked_ingredient(self) -> None:
-        current_ingredient: IngredientItem = self._ingredients_list.currentItem()
-        if not current_ingredient:
-            return
-
-        self._amount_le.setText(current_ingredient.amount)
-        self._unit_le.setText(current_ingredient.unit)
-        self._ingredient_le.setText(current_ingredient.ingredient)
+        self._delete_ingredient_btn.setEnabled(True)
 
     # chanced
     def _chanced_recipe(self) -> None:
@@ -524,6 +535,16 @@ class MainWindow(QMainWindow):
             item: RawTypeItem = self._types_list.item(i)
             found: bool = text.lower() in item.entry.lower()
             item.setHidden(not found)
+
+    def _chanced_ingredient(self) -> None:
+        current_ingredient: IngredientItem = self._ingredients_list.currentItem()
+        if not current_ingredient:
+            return
+
+        self._amount_le.setText(current_ingredient.amount)
+        self._unit_le.setText(current_ingredient.unit)
+        self._ingredient_le.setText(current_ingredient.ingredient)
+        self._delete_ingredient_btn.setEnabled(True)
 
     # raw type window
     def _set_raw_type_window(self) -> None:
