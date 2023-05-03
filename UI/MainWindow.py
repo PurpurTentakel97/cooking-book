@@ -15,7 +15,7 @@ from database import delete as d
 
 
 class Colors:
-    grey: QColor = QColor(0, 0, 0, 100)
+    grey: QColor = QColor(0, 0, 0, 50)
     white: QColor = QColor(255, 255, 255, 255)
 
 
@@ -82,7 +82,6 @@ class MainWindow(QMainWindow):
         self._add_recipe_btn.clicked.connect(self._add_recipe)
         self._recipes_list: QListWidget = QListWidget()
         self._recipes_list.currentItemChanged.connect(self._chanced_recipe)
-        self._recipes_list.itemClicked.connect(self._clicked_recipe)
 
         # middle
         self._title_label: QLabel = QLabel("title:")
@@ -102,7 +101,10 @@ class MainWindow(QMainWindow):
         self._clear_types_search_btn.setEnabled(False)
         self._types_btn: QPushButton = QPushButton("types")
         self._types_btn.clicked.connect(self._set_raw_type_window)
+        self._save_types_btn: QPushButton = QPushButton("save")
+        self._save_types_btn.setEnabled(False)
         self._types_list: QListWidget = QListWidget()
+        self._types_list.itemClicked.connect(self._clicked_type)
 
         self._ingredient_label: QLabel = QLabel("ingredients:")
         self._amount_le: QLineEdit = QLineEdit()
@@ -162,6 +164,7 @@ class MainWindow(QMainWindow):
         mid_h_box_2.addWidget(self._types_search_le)
         mid_h_box_2.addWidget(self._clear_types_search_btn)
         mid_h_box_2.addWidget(self._types_btn)
+        mid_h_box_2.addWidget(self._save_types_btn)
 
         mid_v_box.addLayout(mid_h_box_2)
         mid_v_box.addWidget(self._types_list)
@@ -292,6 +295,14 @@ class MainWindow(QMainWindow):
             recipe: RecipeItem = RecipeItem(ID, title, description)
             self._recipes_list.addItem(recipe)
 
+    def _load_types(self, recipe: RecipeItem) -> None:
+        result = s.select.select_type_by_recipe_ID(recipe.ID)
+        if not result.valid:
+            self._display_message(result.entry)
+            return
+
+        print(result.entry)
+
     # clear
     def _clear_type_search(self) -> None:
         self._types_search_le.clear()
@@ -300,15 +311,6 @@ class MainWindow(QMainWindow):
         self._recipe_search_le.clear()
 
     # clicked
-    def _clicked_recipe(self) -> None:
-        current_recipe: RecipeItem = self._recipes_list.currentItem()
-        if not current_recipe:
-            self._display_message("no selected recipe for selecting recipe")
-            return
-
-        self._title_le.setText(current_recipe.title)
-        self._recipe_entry_te.setText(current_recipe.description)
-
     def _clicked_save_title(self) -> None:
         current_recipe: RecipeItem = self._recipes_list.currentItem()
         if not current_recipe:
@@ -336,12 +338,24 @@ class MainWindow(QMainWindow):
             return
         self._save_recipe_text_btn.setEnabled(False)
 
+    def _clicked_type(self) -> None:
+        current_type: RawTypeItem = self._types_list.currentItem()
+        if not current_type:
+            return
+
+        self._save_types_btn.setEnabled(True)
+        self._types_btn.setEnabled(False)
+        current_type.toggle_selected()
+
     # chanced
     def _chanced_recipe(self) -> None:
-        current_item: RecipeItem = self._recipes_list.currentItem()
-        if not current_item:
+        current_recipe: RecipeItem = self._recipes_list.currentItem()
+        if not current_recipe:
             return
-        self._clicked_recipe()
+
+        self._title_le.setText(current_recipe.title)
+        self._recipe_entry_te.setText(current_recipe.description)
+        self._load_types(current_recipe)
 
     def _chanced_recipe_search(self) -> None:
         current_text: str = self._recipe_search_le.text().strip()
