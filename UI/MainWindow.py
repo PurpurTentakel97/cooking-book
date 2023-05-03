@@ -6,6 +6,7 @@
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QVBoxLayout, QGridLayout, QWidget, QMessageBox
 from PyQt5.QtWidgets import QLineEdit, QPushButton, QListWidget, QListWidgetItem, QTextEdit, QLabel
+from PyQt5.QtGui import QDoubleValidator
 from UI.RawTypesWindow import RawTypesWindow
 
 from database import add as a
@@ -48,6 +49,8 @@ class IngredientItem(QListWidgetItem):
         self.amount: str = amount
         self.unit: str = unit
         self.ingredient: str = ingredient
+
+        self._set_text()
 
     def _set_text(self) -> None:
         text: str = f"{self.amount}"
@@ -131,19 +134,24 @@ class MainWindow(QMainWindow):
         self._ingredient_label: QLabel = QLabel("ingredients:")
         self._amount_le: QLineEdit = QLineEdit()
         self._amount_le.setPlaceholderText("amount")
+        self._amount_le.setValidator(QDoubleValidator())
         self._amount_le.textChanged.connect(self._chanced_ingredient_le)
+        self._amount_le.returnPressed.connect(self._add_ingredient)
         self._unit_le: QLineEdit = QLineEdit()
         self._unit_le.setPlaceholderText("unit")
         self._unit_le.textChanged.connect(self._chanced_ingredient_le)
+        self._unit_le.returnPressed.connect(self._add_ingredient)
         self._ingredient_le: QLineEdit = QLineEdit()
         self._ingredient_le.setPlaceholderText("ingredient")
         self._ingredient_le.textChanged.connect(self._chanced_ingredient_le)
+        self._ingredient_le.returnPressed.connect(self._add_ingredient)
         self._delete_ingredient_btn: QPushButton = QPushButton("delete")
         self._delete_ingredient_btn.setEnabled(False)
         self._cancel_ingredient_btn: QPushButton = QPushButton("cancel")
         self._cancel_ingredient_btn.clicked.connect(self._clear_cancel_ingredients)
         self._add_ingredient_btn: QPushButton = QPushButton("commit")
         self._add_ingredient_btn.setEnabled(False)
+        self._add_ingredient_btn.clicked.connect(self._add_ingredient)
         self._ingredients_list: QListWidget = QListWidget()
 
         # right
@@ -265,6 +273,38 @@ class MainWindow(QMainWindow):
         recipe: RecipeItem = RecipeItem(result.entry, new_name, "description")
         self._recipes_list.addItem(recipe)
         self._recipes_list.setCurrentItem(recipe)
+
+    def _add_ingredient(self) -> None:
+        amount: str = self._amount_le.text().strip()
+        unit: str = self._unit_le.text().strip()
+        ingredient: str = self._ingredient_le.text().strip()
+        current_recipe: RecipeItem = self._recipes_list.currentItem()
+
+        if not current_recipe:
+            return
+
+        if len(amount) == 0 or len(ingredient) == 0:
+            self._display_message("not enough values provided")
+            return
+
+        try:
+            amount_f: float = float(amount)
+        except ValueError:
+            self._display_message("invalid number in amount")
+            return
+
+        result = a.add.add_ingredient(current_recipe.ID, amount_f, unit, ingredient)
+        if not result.valid:
+            self._display_message(result.entry)
+            return
+
+        item: IngredientItem = IngredientItem(result.entry, amount, unit, ingredient)
+        self._ingredients_list.addItem(item)
+        self._ingredients_list.sortItems()
+
+        self._amount_le.clear()
+        self._unit_le.clear()
+        self._ingredient_le.clear()
 
     # update
     def _update_recipe(self) -> bool:
@@ -431,7 +471,7 @@ class MainWindow(QMainWindow):
         amount: str = self._amount_le.text().strip()
         unit: str = self._unit_le.text().strip()
         ingredient: str = self._ingredient_le.text().strip()
-        has_entry: bool = len(amount) != 0 and len(unit) != 0 and len(ingredient) != 0
+        has_entry: bool = len(amount) != 0 and len(ingredient) != 0
 
         if not has_entry:
             self._add_ingredient_btn.setEnabled(False)
