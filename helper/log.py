@@ -74,7 +74,7 @@ def _create_log_file() -> None:
 
     log_dir_name: str = dirs.get_dir_from_file(dirs.FileType.LOG_ENDING)
     _log_file_name = datetime.now().strftime("%d-%m-%Y_%H-%M-%S")
-    _log_file_name = f"{log_dir_name}\\{_log_file_name}{dirs.FileType.LOG_ENDING.value}"
+    _log_file_name = f"{log_dir_name}/{_log_file_name}{dirs.FileType.LOG_ENDING.value}"
 
     with open(_log_file_name, "w") as _:
         var = None

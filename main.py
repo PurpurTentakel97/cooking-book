@@ -5,7 +5,9 @@
 # 11.04.2023
 #
 
-from helper import log
+from helper import init, dirs
+import os
 
 if __name__ == "__main__":
-    log.message(log.LogType.DEBUG, "main.py", "__main__", "I am the best best alive")
+    init.data_init(os.path.join(dirs.get_dir_from_enum(dirs.DirType.DATABASE), dirs.FileType.DATABASE.value))
+    init.UI_init()
