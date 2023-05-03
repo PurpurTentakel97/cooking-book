@@ -101,8 +101,6 @@ class MainWindow(QMainWindow):
         self._clear_types_search_btn.setEnabled(False)
         self._types_btn: QPushButton = QPushButton("types")
         self._types_btn.clicked.connect(self._set_raw_type_window)
-        self._save_types_btn: QPushButton = QPushButton("save")
-        self._save_types_btn.setEnabled(False)
         self._types_list: QListWidget = QListWidget()
         self._types_list.itemClicked.connect(self._clicked_type)
 
@@ -164,7 +162,6 @@ class MainWindow(QMainWindow):
         mid_h_box_2.addWidget(self._types_search_le)
         mid_h_box_2.addWidget(self._clear_types_search_btn)
         mid_h_box_2.addWidget(self._types_btn)
-        mid_h_box_2.addWidget(self._save_types_btn)
 
         mid_v_box.addLayout(mid_h_box_2)
         mid_v_box.addWidget(self._types_list)
@@ -301,8 +298,6 @@ class MainWindow(QMainWindow):
             self._display_message(result.entry)
             return
 
-        print(result.entry)
-
     # clear
     def _clear_type_search(self) -> None:
         self._types_search_le.clear()
@@ -342,10 +337,16 @@ class MainWindow(QMainWindow):
         current_type: RawTypeItem = self._types_list.currentItem()
         if not current_type:
             return
-
-        self._save_types_btn.setEnabled(True)
-        self._types_btn.setEnabled(False)
         current_type.toggle_selected()
+
+        current_recipe: RecipeItem = self._recipes_list.currentItem()
+        if not current_recipe:
+            return
+
+        if current_type.selected:
+            a.add.add_type(current_recipe.ID, current_type.ID)
+        else:
+            d.delete.delete_type_by_recipe_ID_and_raw_type_ID(current_recipe.ID, current_type.ID)
 
     # chanced
     def _chanced_recipe(self) -> None:
