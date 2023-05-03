@@ -402,10 +402,11 @@ class MainWindow(QMainWindow):
     def _chanced_text_type_search(self) -> None:
         text: str = self._types_search_le.text().strip()
         self._clear_types_search_btn.setEnabled(len(text) != 0)
-        self._display_raw_types()
 
-    def _display_raw_types(self) -> None:
-        pass
+        for i in range(self._types_list.count()):
+            item: RawTypeItem = self._types_list.item(i)
+            found: bool = text.lower() in item.entry.lower()
+            item.setHidden(not found)
 
     # raw type window
     def _set_raw_type_window(self) -> None:
