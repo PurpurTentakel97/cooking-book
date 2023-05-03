@@ -3,21 +3,20 @@
 # Cocking Book
 # 18.04.2023
 #
-from PyQt5.QtGui import QColor
+
+
 from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QVBoxLayout, QGridLayout, QWidget, QMessageBox
 from PyQt5.QtWidgets import QLineEdit, QPushButton, QListWidget, QListWidgetItem, QTextEdit, QLabel
 from PyQt5.QtGui import QDoubleValidator
+
+from UI.FilterRecipeWindow import FilterRecipeWindow
 from UI.RawTypesWindow import RawTypesWindow
+from UI.Color import Colors
 
 from database import add as a
 from database import select as s
 from database import update as u
 from database import delete as d
-
-
-class Colors:
-    grey: QColor = QColor(0, 0, 0, 50)
-    white: QColor = QColor(255, 255, 255, 255)
 
 
 class RawTypeItem(QListWidgetItem):
@@ -55,8 +54,8 @@ class IngredientItem(QListWidgetItem):
     def _set_text(self) -> None:
         text: str = f"{self.amount}"
         if len(self.unit) != 0:
-            text += self.unit
-        text += f" {self.ingredient}"
+            text += f" {self.unit}"
+        text += f"  {self.ingredient}"
 
         self.setText(text)
 
@@ -89,7 +88,9 @@ class MainWindow(QMainWindow):
         self._ini_layout()
         self._init_data()
 
+        self._recipe_filter_list: list[RecipeItem, ...] = list()
         self._raw_types_window: RawTypesWindow | None = None
+        self._filter_recipe_window: FilterRecipeWindow | None = None
 
     # init
     def _init_UI(self) -> None:
@@ -103,6 +104,8 @@ class MainWindow(QMainWindow):
         self._clear_recipe_search_btn: QPushButton = QPushButton("clear")
         self._clear_recipe_search_btn.setEnabled(False)
         self._clear_recipe_search_btn.clicked.connect(self._clear_recipe_search)
+        self._filter_recipe_btn: QPushButton = QPushButton("filter")
+        self._filter_recipe_btn.clicked.connect(self._set_recipe_filter_window)
         self._delete_recipe_btn: QPushButton = QPushButton("delete")
         self._delete_recipe_btn.clicked.connect(self._delete_recipe)
         self._add_recipe_btn: QPushButton = QPushButton("add")
@@ -136,15 +139,15 @@ class MainWindow(QMainWindow):
         self._amount_le.setPlaceholderText("amount")
         self._amount_le.setValidator(QDoubleValidator())
         self._amount_le.textChanged.connect(self._chanced_ingredient_le)
-        self._amount_le.returnPressed.connect(self._add_ingredient)
+        self._amount_le.returnPressed.connect(self._clicked_accept_ingredient)
         self._unit_le: QLineEdit = QLineEdit()
         self._unit_le.setPlaceholderText("unit")
         self._unit_le.textChanged.connect(self._chanced_ingredient_le)
-        self._unit_le.returnPressed.connect(self._add_ingredient)
+        self._unit_le.returnPressed.connect(self._clicked_accept_ingredient)
         self._ingredient_le: QLineEdit = QLineEdit()
         self._ingredient_le.setPlaceholderText("ingredient")
         self._ingredient_le.textChanged.connect(self._chanced_ingredient_le)
-        self._ingredient_le.returnPressed.connect(self._add_ingredient)
+        self._ingredient_le.returnPressed.connect(self._clicked_accept_ingredient)
         self._delete_ingredient_btn: QPushButton = QPushButton("delete")
         self._delete_ingredient_btn.setEnabled(False)
         self._delete_ingredient_btn.clicked.connect(self._delete_ingredient)
@@ -152,23 +155,21 @@ class MainWindow(QMainWindow):
         self._cancel_ingredient_btn.clicked.connect(self._clear_cancel_ingredients)
         self._add_ingredient_btn: QPushButton = QPushButton("commit")
         self._add_ingredient_btn.setEnabled(False)
-        self._add_ingredient_btn.clicked.connect(self._add_ingredient)
+        self._add_ingredient_btn.clicked.connect(self._clicked_accept_ingredient)
         self._ingredients_list: QListWidget = QListWidget()
         self._ingredients_list.currentItemChanged.connect(self._chanced_ingredient)
-        self._ingredients_list.itemClicked.connect(self._clicked_ingredient)
+        self._ingredients_list.itemClicked.connect(self._chanced_ingredient)
 
         # right
         self._recipe_entry_label: QLabel = QLabel("recipe:")
+        self._export_btn: QPushButton = QPushButton("export")
+        self._export_btn.clicked.connect(self._export_recipe)
         self._save_recipe_text_btn: QPushButton = QPushButton("save")
         self._save_recipe_text_btn.setEnabled(False)
         self._save_recipe_text_btn.clicked.connect(self._clicked_save_description)
         self._recipe_entry_te: QTextEdit = QTextEdit()
         self._recipe_entry_te.setPlaceholderText("enter the recipe description")
         self._recipe_entry_te.textChanged.connect(self._chanced_description)
-
-        self._global_save_btn: QPushButton = QPushButton("save all")
-        self._global_save_btn.setEnabled(False)
-        self._export_btn: QPushButton = QPushButton("export")
 
     def _ini_layout(self) -> None:
         # left
@@ -178,6 +179,7 @@ class MainWindow(QMainWindow):
         left_h_box_1: QHBoxLayout = QHBoxLayout()
         left_h_box_1.addWidget(self._recipe_search_le)
         left_h_box_1.addWidget(self._clear_recipe_search_btn)
+        left_h_box_1.addWidget(self._filter_recipe_btn)
 
         left_v_box.addLayout(left_h_box_1)
 
@@ -225,16 +227,11 @@ class MainWindow(QMainWindow):
         right_h_box_1: QHBoxLayout = QHBoxLayout()
         right_h_box_1.addWidget(self._recipe_entry_label)
         right_h_box_1.addStretch()
+        right_h_box_1.addWidget(self._export_btn)
         right_h_box_1.addWidget(self._save_recipe_text_btn)
 
         right_v_box.addLayout(right_h_box_1)
         right_v_box.addWidget(self._recipe_entry_te)
-
-        right_h_box2: QHBoxLayout = QHBoxLayout()
-        right_h_box2.addWidget(self._global_save_btn)
-        right_h_box2.addWidget(self._export_btn)
-
-        right_v_box.addLayout(right_h_box2)
 
         # global
         global_h_box: QVBoxLayout = QHBoxLayout()
@@ -322,6 +319,25 @@ class MainWindow(QMainWindow):
             return False
 
         return True
+
+    def _update_ingredient(self, ingredient_item: IngredientItem) -> None:
+        amount: str = self._amount_le.text().strip()
+        unit: str = self._unit_le.text().strip()
+        ingredient: str = self._ingredient_le.text().strip()
+
+        try:
+            amount_f: float = float(amount)
+        except ValueError:
+            self._display_message("invalid number in amount")
+            return
+
+        result = u.update.update_ingredient_by_ID(ingredient_item.ID, amount_f, unit, ingredient)
+        if not result.valid:
+            self._display_message(result.entry)
+            return
+
+        ingredient_item.update(amount, unit, ingredient)
+        self._clear_cancel_ingredients()
 
     # delete
     def _delete_recipe(self) -> None:
@@ -472,8 +488,12 @@ class MainWindow(QMainWindow):
 
         self._types_list.clearSelection()
 
-    def _clicked_ingredient(self) -> None:
-        self._delete_ingredient_btn.setEnabled(True)
+    def _clicked_accept_ingredient(self) -> None:
+        current_ingredient: IngredientItem = self._ingredients_list.currentItem()
+        if not current_ingredient:
+            self._add_ingredient()
+        else:
+            self._update_ingredient(current_ingredient)
 
     # chanced
     def _chanced_recipe(self) -> None:
@@ -519,6 +539,11 @@ class MainWindow(QMainWindow):
             self._add_ingredient_btn.setEnabled(True)
             return
 
+        change: bool = amount.lower() != current_ingredient.amount.lower() \
+                       or unit.lower() != current_ingredient.unit.lower() \
+                       or ingredient.lower() != current_ingredient.ingredient.lower()
+        self._add_ingredient_btn.setEnabled(change)
+
     def _chanced_description(self) -> None:
         current_recipe: RecipeItem = self._recipes_list.currentItem()
         if not current_recipe:
@@ -560,6 +585,19 @@ class MainWindow(QMainWindow):
             self._load_types(current_recipe)
 
         self.window().setEnabled(True)
+
+    # recipe filter window
+    def _set_recipe_filter_window(self) -> None:
+        self.window().setEnabled(False)
+        self._filter_recipe_window = FilterRecipeWindow(self.filter_recipe_callback)
+
+    def filter_recipe_callback(self) -> None:
+        print("TODO: filter recipes callback")
+        self.window().setEnabled(True)
+
+    # export
+    def _export_recipe(self) -> None:
+        print("TODO: export recipe")
 
     # statics
     @staticmethod
