@@ -40,6 +40,30 @@ class RawTypeItem(QListWidgetItem):
             self.setBackground(Colors.white)
 
 
+class IngredientItem(QListWidgetItem):
+    def __init__(self, ID: int, amount: str, unit: str, ingredient: str) -> None:
+        super().__init__()
+
+        self.ID: int = ID
+        self.amount: str = amount
+        self.unit: str = unit
+        self.ingredient: str = ingredient
+
+    def _set_text(self) -> None:
+        text: str = f"{self.amount}"
+        if len(self.unit) != 0:
+            text += self.unit
+        text += f" {self.ingredient}"
+
+        self.setText(text)
+
+    def update(self, amount: str, unit: str, ingredient: str) -> None:
+        self.amount = amount
+        self.unit = unit
+        self.ingredient = ingredient
+        self._set_text()
+
+
 class RecipeItem(QListWidgetItem):
     def __init__(self, ID: int, title: str, description: str) -> None:
         super().__init__()
@@ -107,13 +131,19 @@ class MainWindow(QMainWindow):
         self._ingredient_label: QLabel = QLabel("ingredients:")
         self._amount_le: QLineEdit = QLineEdit()
         self._amount_le.setPlaceholderText("amount")
+        self._amount_le.textChanged.connect(self._chanced_ingredient_le)
         self._unit_le: QLineEdit = QLineEdit()
         self._unit_le.setPlaceholderText("unit")
+        self._unit_le.textChanged.connect(self._chanced_ingredient_le)
         self._ingredient_le: QLineEdit = QLineEdit()
         self._ingredient_le.setPlaceholderText("ingredient")
+        self._ingredient_le.textChanged.connect(self._chanced_ingredient_le)
         self._delete_ingredient_btn: QPushButton = QPushButton("delete")
+        self._delete_ingredient_btn.setEnabled(False)
         self._cancel_ingredient_btn: QPushButton = QPushButton("cancel")
-        self._add_ingredient_btn: QPushButton = QPushButton("add / update")
+        self._cancel_ingredient_btn.clicked.connect(self._clear_cancel_ingredients)
+        self._add_ingredient_btn: QPushButton = QPushButton("commit")
+        self._add_ingredient_btn.setEnabled(False)
         self._ingredients_list: QListWidget = QListWidget()
 
         # right
@@ -318,6 +348,12 @@ class MainWindow(QMainWindow):
     def _clear_recipe_search(self) -> None:
         self._recipe_search_le.clear()
 
+    def _clear_cancel_ingredients(self) -> None:
+        self._amount_le.clear()
+        self._unit_le.clear()
+        self._ingredient_le.clear()
+        self._ingredients_list.clearSelection()
+
     # clicked
     def _clicked_save_title(self) -> None:
         current_recipe: RecipeItem = self._recipes_list.currentItem()
@@ -383,13 +419,28 @@ class MainWindow(QMainWindow):
             current_item.setHidden(not found)
 
     def _chanced_title(self) -> None:
-        current_text: str = self._title_le.text()
+        current_text: str = self._title_le.text().strip()
         current_recipe: RecipeItem = self._recipes_list.currentItem()
         if not current_recipe:
             self._display_message("no selected recipe for title chance")
             return
 
-        self._save_title_btn.setEnabled(current_text != current_recipe.title)
+        self._save_title_btn.setEnabled(current_text != current_recipe.title and len(current_text) != 0)
+
+    def _chanced_ingredient_le(self) -> None:
+        amount: str = self._amount_le.text().strip()
+        unit: str = self._unit_le.text().strip()
+        ingredient: str = self._ingredient_le.text().strip()
+        has_entry: bool = len(amount) != 0 and len(unit) != 0 and len(ingredient) != 0
+
+        if not has_entry:
+            self._add_ingredient_btn.setEnabled(False)
+            return
+
+        current_ingredient: IngredientItem = self._ingredients_list.currentItem()
+        if not current_ingredient:
+            self._add_ingredient_btn.setEnabled(True)
+            return
 
     def _chanced_description(self) -> None:
         current_recipe: RecipeItem = self._recipes_list.currentItem()
