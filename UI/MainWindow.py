@@ -298,6 +298,19 @@ class MainWindow(QMainWindow):
             self._display_message(result.entry)
             return
 
+        for i in range(self._types_list.count()):
+            current_type: RawTypeItem = self._types_list.item(i)
+
+            selected: bool = False
+            for _, _, raw_type_ID in result.entry:
+                if raw_type_ID == current_type.ID:
+                    current_type.set_selected(True)
+                    selected = True
+                    break
+
+            if not selected:
+                current_type.set_selected(False)
+
     # clear
     def _clear_type_search(self) -> None:
         self._types_search_le.clear()
@@ -347,6 +360,8 @@ class MainWindow(QMainWindow):
             a.add.add_type(current_recipe.ID, current_type.ID)
         else:
             d.delete.delete_type_by_recipe_ID_and_raw_type_ID(current_recipe.ID, current_type.ID)
+
+        self._types_list.clearSelection()
 
     # chanced
     def _chanced_recipe(self) -> None:
@@ -401,6 +416,10 @@ class MainWindow(QMainWindow):
         self._load_raw_types()
         self._types_search_le.clear()
         self._raw_types_window = None
+        current_recipe: RecipeItem = self._recipes_list.currentItem()
+        if current_recipe:
+            self._load_types(current_recipe)
+
         self.window().setEnabled(True)
 
     # statics
