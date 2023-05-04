@@ -417,6 +417,11 @@ class MainWindow(QMainWindow):
             recipe: RecipeItem = RecipeItem(ID, title, description)
             self._recipes_list.addItem(recipe)
 
+        if self._recipes_list.count() == 0:
+            self._display_message("no recipes left with this filter")
+            self._recipe_filter_list = list()
+            self._load_recipes()
+
     def _load_types(self, recipe: RecipeItem) -> None:
         result = s.select.select_type_by_recipe_ID(recipe.ID)
         if not result.valid:
