@@ -26,8 +26,12 @@ class TypeItem(QListWidgetItem):
         else:
             self.setBackground(Colors.white)
 
-    def _toggle_selected(self) -> None:
+    def toggle_selected(self) -> None:
         self.selected = not self.selected
+        self._set_background()
+
+    def set_selected(self, selected: bool) -> None:
+        self.selected = selected
         self._set_background()
 
 
@@ -45,12 +49,17 @@ class FilterRecipeWindow(QWidget):
     def _initialize(self) -> None:
         self._search_le: QLineEdit = QLineEdit()
         self._search_le.setPlaceholderText("search type")
+        self._search_le.textChanged.connect(self._search_type)
         self._clear_search_btn: QPushButton = QPushButton("clear search")
+        self._clear_search_btn.clicked.connect(self._clear_search)
 
         self._type_list: QListWidget = QListWidget()
+        self._type_list.itemClicked.connect(self._type_clicked)
 
-        self._accept_btn: QPushButton = QPushButton("filter")
+        self._accept_btn: QPushButton = QPushButton("set filter")
+        self._accept_btn.clicked.connect(self._set_filter)
         self._clear_selection_btn: QPushButton = QPushButton("clear selection")
+        self._clear_selection_btn.clicked.connect(self._clear_selection)
 
     def _set_layout(self) -> None:
         top_h_box: QHBoxLayout = QHBoxLayout()
@@ -78,6 +87,42 @@ class FilterRecipeWindow(QWidget):
             item: TypeItem = TypeItem(ID, value)
             self._type_list.addItem(item)
 
+    def _type_clicked(self) -> None:
+        current_type: TypeItem = self._type_list.currentItem()
+        if not current_type:
+            return
+
+        current_type.toggle_selected()
+        self._type_list.clearSelection()
+
+    def _clear_selection(self) -> None:
+        for i in range(self._type_list.count()):
+            item: TypeItem = self._type_list.item(i)
+            item.set_selected(False)
+
+    def _clear_search(self) -> None:
+        self._search_le.clear()
+
+    def _search_type(self) -> None:
+        search_text: str = self._search_le.text().strip()
+        for i in range(self._type_list.count()):
+            item: TypeItem = self._type_list.item(i)
+            contains: bool = search_text.lower() in item.value.lower()
+            item.setHidden(not contains)
+
+    def _set_filter(self) -> None:
+        self.close()
+
+    def _get_current_selected_IDs(self) -> list[int, ...]:
+        to_return: list[int, ...] = list()
+
+        for i in range(self._type_list.count()):
+            item: TypeItem = self._type_list.item(i)
+            if item.selected:
+                to_return.append(item.ID)
+
+        return to_return
+
     def closeEvent(self, event) -> None:
-        self._close_callback()
+        self._close_callback(self._get_current_selected_IDs())
         event.accept()

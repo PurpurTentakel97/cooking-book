@@ -84,13 +84,13 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
 
+        self._recipe_filter_list: list[int, ...] = list()
+        self._raw_types_window: RawTypesWindow | None = None
+        self._filter_recipe_window: FilterRecipeWindow | None = None
+
         self._init_UI()
         self._ini_layout()
         self._init_data()
-
-        self._recipe_filter_list: list[RecipeItem, ...] = list()
-        self._raw_types_window: RawTypesWindow | None = None
-        self._filter_recipe_window: FilterRecipeWindow | None = None
 
     # init
     def _init_UI(self) -> None:
@@ -262,6 +262,26 @@ class MainWindow(QMainWindow):
         else:
             self._recipes_list.setCurrentRow(0)
 
+    def _check_valid_filter_recipe(self, ID: int) -> bool:
+        if len(self._recipe_filter_list) == 0:
+            return True
+
+        result = s.select.select_type_by_recipe_ID(ID)
+        if not result.valid:
+            return True
+
+        for filter_id in self._recipe_filter_list:
+            found: bool = False
+            for _, _, raw_type_id in result.entry:
+                if filter_id == raw_type_id:
+                    found = True
+                    break
+
+            if not found:
+                return False
+
+        return True
+
     # add
     def _add_recipe(self) -> None:
         new_name: str = f"new recipe {self._recipes_list.count() + 1}"
@@ -392,6 +412,8 @@ class MainWindow(QMainWindow):
 
         self._recipes_list.clear()
         for ID, title, description in result.entry:
+            if not self._check_valid_filter_recipe(ID):
+                continue
             recipe: RecipeItem = RecipeItem(ID, title, description)
             self._recipes_list.addItem(recipe)
 
@@ -591,8 +613,9 @@ class MainWindow(QMainWindow):
         self.window().setEnabled(False)
         self._filter_recipe_window = FilterRecipeWindow(self.filter_recipe_callback)
 
-    def filter_recipe_callback(self) -> None:
-        print("TODO: filter recipes callback")
+    def filter_recipe_callback(self, type_ids: list[int, ...]) -> None:
+        self._recipe_filter_list = type_ids
+        self._load_recipes()
         self.window().setEnabled(True)
 
     # export
