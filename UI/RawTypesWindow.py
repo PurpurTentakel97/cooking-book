@@ -138,6 +138,7 @@ class RawTypesWindow(QWidget):
 
     def _input_changed(self) -> None:
         current_input: str = self._input.text().strip()
+
         self._accept_btn.setEnabled(len(current_input) != 0)
 
     @staticmethod
