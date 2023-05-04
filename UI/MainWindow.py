@@ -17,6 +17,7 @@ from database import add as a
 from database import select as s
 from database import update as u
 from database import delete as d
+from pdf import pdfHandler as p_h
 
 
 class RawTypeItem(QListWidgetItem):
@@ -625,7 +626,15 @@ class MainWindow(QMainWindow):
 
     # export
     def _export_recipe(self) -> None:
-        print("TODO: export recipe")
+        current_recipe: RecipeItem = self._recipes_list.currentItem()
+        if not current_recipe:
+            self._display_message("no recipe selected")
+            return
+
+        should_open: bool = self._display_accept_message("open PDF?", "open the PDF after exporting?",
+                                                         "The PDF can be open automatically after exorting it.")
+
+        p_h.export_recipe(current_recipe.ID, should_open)
 
     # statics
     @staticmethod
