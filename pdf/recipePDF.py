@@ -4,12 +4,13 @@
 # 05.05.2023
 #
 
+from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
-from reportlab.lib.enums import TA_RIGHT, TA_CENTER
+from reportlab.lib.enums import TA_RIGHT, TA_CENTER, TA_LEFT
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table
 
 from helper import log
 from database import select as s
@@ -77,6 +78,8 @@ class RecipePDF:
         _title = title
 
         elements.append(Paragraph(title, self.custom_styles["CustomTitle"]))
+        elements.append(
+            Paragraph("TODO: x portionen", self.custom_styles['CustomBodyTextCenter']))  # @todo export real count
         elements.append(Spacer(width=0, height=1 * cm))
 
         return elements
@@ -118,7 +121,11 @@ class RecipePDF:
         if len(ingredient_result.entry) == 0:
             elements.append(Paragraph("no ingredients", self.custom_styles['CustomBodyTextLeft']))
         else:
-            pass
+            table_data: list = list()
+            for _, _, amount, unit, ingredient in ingredient_result.entry:
+                table_data.append([f"{amount}{unit}", ingredient])
+            table = Table(table_data, hAlign='LEFT', rowHeights=0.5 * cm)
+            elements.append(table)
 
         elements.append(Spacer(width=0, height=1 * cm))
         return elements
