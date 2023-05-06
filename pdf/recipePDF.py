@@ -14,6 +14,8 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 from helper import log
 from database import select as s
 
+_title: str | None = None
+
 
 class RecipePDF:
     def __init__(self) -> None:
@@ -62,6 +64,7 @@ class RecipePDF:
         elements: list = list()
         elements.extend(self._get_headline(recipe_result.entry))
         elements.extend(self._get_tags(ID))
+        elements.extend(self._get_ingredients(ID))
         elements.extend(self._get_description(recipe_result.entry))
 
         return self._export(doc=doc, elements=elements)
@@ -69,6 +72,9 @@ class RecipePDF:
     def _get_headline(self, recipe_data: list) -> list:
         _, title, _ = recipe_data
         elements: list = list()
+
+        global _title
+        _title = title
 
         elements.append(Paragraph(title, self.custom_styles["CustomTitle"]))
         elements.append(Spacer(width=0, height=1 * cm))
@@ -100,7 +106,22 @@ class RecipePDF:
         return elements
 
     def _get_ingredients(self, ID: int) -> list:
-        pass
+        ingredient_result = s.select.select_all_ingredients_from_recipe(ID)
+        if not ingredient_result.valid:
+            log.message(log.LogType.ERROR, "recipePDF.py", "self._get_ingredients()",
+                        f"could not load ingredients from recipe id ->{ID}")
+            return list()
+
+        elements: list = list()
+        elements.append(Paragraph("Ingredients", self.custom_styles['CustomHeading']))
+
+        if len(ingredient_result.entry) == 0:
+            elements.append(Paragraph("no ingredients", self.custom_styles['CustomBodyTextLeft']))
+        else:
+            pass
+
+        elements.append(Spacer(width=0, height=1 * cm))
+        return elements
 
     def _get_description(self, recipe_data: list) -> list:
         _, _, description = recipe_data
@@ -125,15 +146,18 @@ class RecipePDF:
                                  leftMargin=1.5 * cm, topMargin=1.5 * cm, bottomMargin=1.5 * cm)
 
     def _export(self, doc: SimpleDocTemplate, elements: list, numbered: bool = True) -> bool:
+        global _title
         try:
             if numbered:
                 doc.build(elements, canvasmaker=NumberedCanvas)
             else:
                 doc.build(elements)
+            _title = None
             return True
         except PermissionError:
             log.message(log.LogType.ERROR, "recipePDF.py", "self._export()",
                         f"no premission to export PDF -> {self.dir_name}\\{self.file_name}")
+            _title = None
             return False
 
 
@@ -157,5 +181,5 @@ class NumberedCanvas(canvas.Canvas):
 
     def draw_page_number(self, page_count) -> None:
         self.setFont("Helvetica", 10)
-        self.drawRightString(20 * cm, 2 * cm,
-                             "Seite %d von %d" % (self._pageNumber, page_count))
+        entry: str = f"{_title} | page {self._pageNumber} of {page_count}" if _title else f"page {self._pageNumber} of {page_count}"
+        self.drawRightString(20 * cm, 2 * cm, entry)
