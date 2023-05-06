@@ -5,7 +5,7 @@
 #
 
 
-from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QVBoxLayout, QGridLayout, QWidget, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QVBoxLayout, QGridLayout, QWidget, QMessageBox, QFileDialog
 from PyQt5.QtWidgets import QLineEdit, QPushButton, QListWidget, QListWidgetItem, QTextEdit, QLabel
 from PyQt5.QtGui import QDoubleValidator
 
@@ -18,6 +18,7 @@ from database import select as s
 from database import update as u
 from database import delete as d
 from pdf import pdfHandler as p_h
+from helper import dirs
 
 
 class RawTypeItem(QListWidgetItem):
@@ -631,10 +632,32 @@ class MainWindow(QMainWindow):
             self._display_message("no recipe selected")
             return
 
+        if not dirs.check_and_make_dir(dirs.DirType.EXPORT):
+            self._display_message("could not generate export dir")
+            return
+
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save Recipe", dirs.get_dir_from_enum(dirs.DirType.EXPORT),
+                                                  "Text Files (*.pdf)", options=options)
+
+        if not fileName:
+            return
+
+        result = p_h.export_recipe(current_recipe.ID, fileName)
+
+        if not result:
+            self._display_message("could not save pdf")
+            return
+
         should_open: bool = self._display_accept_message("open PDF?", "open the PDF after exporting?",
                                                          "The PDF can be open automatically after exorting it.")
 
-        p_h.export_recipe(current_recipe.ID, should_open)
+        if should_open:
+            result = p_h.open_pdf(fileName)
+            if not result:
+                self._display_message("could not open pdf")
+                return
 
     # statics
     @staticmethod

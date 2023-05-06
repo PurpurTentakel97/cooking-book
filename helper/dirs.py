@@ -16,12 +16,15 @@ class DirType(Enum):
     LOGS =          "logs"
     DATABASE =      "database"
     CONFIG =        "config"
+    EXPORT =        "export"
 
 
 class FileType(Enum):
     LOG_ENDING =      ".CB_LOG"
     DATABASE =        "recipes.CB_DB"
     DATABASE_CONFIG = "create.sql"
+    EXPORT =          ".pdf"
+
 # @formatter:on
 
 
@@ -35,6 +38,8 @@ def get_dir_from_enum(path_type: DirType) -> str:
             return os.path.join(os.getcwd(), DirType.SAVES.value, DirType.DATABASE.value)
         case DirType.CONFIG:
             return os.path.join(os.getcwd(), DirType.CONFIG.value)
+        case DirType.EXPORT:
+            return os.path.join(os.getcwd(), DirType.SAVES.value, DirType.EXPORT.value)
 
 
 def _create_dir(my_path: str) -> bool:
@@ -62,3 +67,5 @@ def get_dir_from_file(file_type: FileType) -> str:
             return get_dir_from_enum(DirType.LOGS)
         case FileType.DATABASE:
             return get_dir_from_enum(DirType.DATABASE)
+        case FileType.EXPORT:
+            return get_dir_from_enum(DirType.EXPORT)
