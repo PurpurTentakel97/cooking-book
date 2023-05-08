@@ -125,6 +125,10 @@ class MainWindow(QMainWindow):
         self._save_title_btn.setEnabled(False)
         self._save_title_btn.clicked.connect(self._clicked_save_title)
         self._types_label: QLabel = QLabel("types:")
+        self._standard_count: QLineEdit = QLineEdit()
+        self._standard_count.setPlaceholderText("base serving count")
+        self._scale_count: QLineEdit = QLineEdit()
+        self._scale_count.setPlaceholderText("scale serving count")
         self._types_search_le: QLineEdit = QLineEdit()
         self._types_search_le.setPlaceholderText("types search")
         self._types_search_le.textChanged.connect(self._chanced_text_type_search)
@@ -201,14 +205,21 @@ class MainWindow(QMainWindow):
         mid_h_box_1.addWidget(self._save_title_btn)
 
         mid_v_box.addLayout(mid_h_box_1)
-        mid_v_box.addWidget(self._types_label)
 
         mid_h_box_2: QHBoxLayout = QHBoxLayout()
-        mid_h_box_2.addWidget(self._types_search_le)
-        mid_h_box_2.addWidget(self._clear_types_search_btn)
-        mid_h_box_2.addWidget(self._types_btn)
+        mid_h_box_2.addWidget(self._types_label)
+        mid_h_box_2.addStretch(500)
+        mid_h_box_2.addWidget(self._standard_count)
+        mid_h_box_2.addWidget(self._scale_count)
 
         mid_v_box.addLayout(mid_h_box_2)
+
+        mid_h_box_3: QHBoxLayout = QHBoxLayout()
+        mid_h_box_3.addWidget(self._types_search_le)
+        mid_h_box_3.addWidget(self._clear_types_search_btn)
+        mid_h_box_3.addWidget(self._types_btn)
+
+        mid_v_box.addLayout(mid_h_box_3)
         mid_v_box.addWidget(self._types_list)
         mid_v_box.addWidget(self._ingredient_label)
 
@@ -287,7 +298,7 @@ class MainWindow(QMainWindow):
     # add
     def _add_recipe(self) -> None:
         new_name: str = f"new recipe {self._recipes_list.count() + 1}"
-        result = a.add.add_recipe(new_name, "description")
+        result = a.add.add_recipe(new_name, "description", 1, 1)
         if not result.valid:
             self._display_message(result.entry)
             return
@@ -419,10 +430,12 @@ class MainWindow(QMainWindow):
             recipe: RecipeItem = RecipeItem(ID, title, description)
             self._recipes_list.addItem(recipe)
 
-        if self._recipes_list.count() == 0:
+        if self._recipes_list.count() == 0 and len(self._recipe_filter_list) != 0:
             self._display_message("no recipes left with this filter")
             self._recipe_filter_list = list()
             self._load_recipes()
+        else:
+            self._add_recipe()
 
     def _load_types(self, recipe: RecipeItem) -> None:
         result = s.select.select_type_by_recipe_ID(recipe.ID)
