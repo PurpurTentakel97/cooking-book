@@ -26,6 +26,8 @@ CREATE TABLE IF NOT EXISTS "main"."recipes"(
 "_updated" INTEGER DEFAULT (CAST(strftime('%s', 'now') AS INTEGER)),
 "title" TEXT NOT NULL UNIQUE,
 "description" TEXT NOT NULL,
+"standard_serving_count" INTEGER NOT NULL,
+"scale_serving_count" INTEGER NOT NULL,
 PRIMARY KEY ("ID" AUTOINCREMENT)
 );
 /* Trigger */

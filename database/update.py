@@ -57,14 +57,15 @@ class Update:
     # /raw types
 
     # recipes
-    def update_recipe_by_ID(self, ID: int, title: str, description: str) -> r_m.ReturnMessage:
+    def update_recipe_by_ID(self, ID: int, title: str, description: str, standard_serving_count: int,
+                            scale_serving_count: int) -> r_m.ReturnMessage:
         title, description = title.strip(), description.strip()
-        if not v_d.check_update_recipe_by_ID(ID, title, description):
+        if not v_d.check_update_recipe_by_ID(ID, title, description, standard_serving_count, scale_serving_count):
             return r_m.ReturnMessageStr("no valid argument for updating recipe", False)
 
-        sql_command: str = f"""UPDATE recipes SET title = ?, description = ? WHERE ID is ?;"""
+        sql_command: str = f"""UPDATE recipes SET title = ?, description = ?, standard_serving_count = ?, scale_serving_count = ?   WHERE ID is ?;"""
         try:
-            self.db.cursor.execute(sql_command, (title, description, ID))
+            self.db.cursor.execute(sql_command, (title, description, standard_serving_count, scale_serving_count, ID))
             self.db.connection.commit()
 
             log.message(log.LogType.UPDATED, "update.py", "self.update_recipe_by_ID()", f"updated recipy -> {title}")
@@ -73,14 +74,17 @@ class Update:
             log.error(log.LogType.ERROR, "update.py", "self.update_recipe_by_ID()", sys.exc_info())
             return r_m.ReturnMessageStr(f"not able to update recipe -> {title}", False)
 
-    def update_recipe_by_title(self, old_title: str, new_title: str, description: str) -> r_m.ReturnMessage:
+    def update_recipe_by_title(self, old_title: str, new_title: str, description: str, standard_serving_count: int,
+                               scale_serving_count: int) -> r_m.ReturnMessage:
         old_title, new_title, description = old_title.strip(), new_title.strip(), description.strip()
-        if not v_d.check_update_recipe_by_title(old_title, new_title, description):
+        if not v_d.check_update_recipe_by_title(old_title, new_title, description, standard_serving_count,
+                                                scale_serving_count):
             return r_m.ReturnMessageStr("no valid argument for updating recipe", False)
 
-        sql_command: str = f"""UPDATE recipes SET title = ?, description = ? WHERE title is ?;"""
+        sql_command: str = f"""UPDATE recipes SET title = ?, description = ?, standard_serving_count = ?, scale_serving_count = ?  WHERE title is ?;"""
         try:
-            self.db.cursor.execute(sql_command, (new_title, description, old_title))
+            self.db.cursor.execute(sql_command,
+                                   (new_title, description, standard_serving_count, scale_serving_count, old_title))
             self.db.connection.commit()
 
             log.message(log.LogType.UPDATED, "update.py", "self.update_recipe_by_title()",

@@ -19,11 +19,11 @@ entries: dict = {
         "Abendessen" ,  # 3
     ],
     "recipes": [
-        ["Nudelauflauf",  "Beschreibung 1"],  # 1
-        ["Braten",        "Beschreibung 2"],  # 2
-        ["Schokopudding", "Beschreibung 3"],  # 3
-        ["Salat",         "Beschreibung 4"],  # 4
-        ["Brot",          "Beschreibung 5"],  # 5
+        ["Nudelauflauf",  "Beschreibung 1", 2,  6 ],  # 1
+        ["Braten",        "Beschreibung 2", 10, 60],  # 2
+        ["Schokopudding", "Beschreibung 3", 30, 50],  # 3
+        ["Salat",         "Beschreibung 4", 10, 15],  # 4
+        ["Brot",          "Beschreibung 5", 10, 9 ],  # 5
     ],
     "ingredients": [
         [1, 500.0, "g",  "Nudeln"           ],  # 1
@@ -81,8 +81,8 @@ def _add_raw_types_to_database() -> None:
 
 
 def _add_recipes_to_database() -> None:
-    for title, description in entries["recipes"]:
-        a.add.add_recipe(title, description)
+    for title, description, standard_serving_count, scale_serving_count in entries["recipes"]:
+        a.add.add_recipe(title, description, standard_serving_count, scale_serving_count)
 
 
 def _add_ingredients_to_database() -> None:

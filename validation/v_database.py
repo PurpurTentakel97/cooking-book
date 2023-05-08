@@ -201,7 +201,7 @@ def check_select_recipe_by_title(title: str) -> bool:
         log.message(log.LogType.INFO, "v_database.py", "select_recipe_by_title()", "ResultMassage not valid")
         return False
 
-    for _, s_title, _ in result.entry:
+    for _, s_title, *_ in result.entry:
         if s_title == title:
             return True
 
@@ -213,10 +213,15 @@ def check_select_recipe_by_title(title: str) -> bool:
 # /select
 # add
 
-def check_add_recipe(title: str, description: str) -> bool:
+def check_add_recipe(title: str, description: str, standard_serving_count: int,
+                     scale_serving_count: int) -> bool:
     if not v_h.is_valid_string(title):
         return False
     if not v_h.is_valid_string(description):
+        return False
+    if not v_h.is_valid_ID(standard_serving_count):
+        return False
+    if not v_h.is_valid_ID(scale_serving_count):
         return False
 
     result: r_m.ReturnMessage = s.select.select_all_recipes()
@@ -224,7 +229,7 @@ def check_add_recipe(title: str, description: str) -> bool:
         log.message(log.LogType.INFO, "v_database.py", "add_recipe()", "ResultMassage not valid")
         return False
 
-    for _, s_title, _ in result.entry:
+    for _, s_title, *_ in result.entry:
         if s_title == title:
             log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "add_recipe()",
                         f"recipe title already existing -> {title}")
@@ -235,12 +240,17 @@ def check_add_recipe(title: str, description: str) -> bool:
 
 # /add
 # update
-def check_update_recipe_by_ID(ID: int, title: str, description: str) -> bool:
+def check_update_recipe_by_ID(ID: int, title: str, description: str, standard_serving_count: int,
+                              scale_serving_count: int) -> bool:
     if not v_h.is_valid_ID(ID):
         return False
     if not v_h.is_valid_string(title):
         return False
     if not v_h.is_valid_string(description):
+        return False
+    if not v_h.is_valid_ID(standard_serving_count):
+        return False
+    if not v_h.is_valid_ID(scale_serving_count):
         return False
 
     result = s.select.select_all_recipes()
@@ -248,13 +258,13 @@ def check_update_recipe_by_ID(ID: int, title: str, description: str) -> bool:
         log.message(log.LogType.INFO, "v_database.py", "update_recipe_by_ID()", "ResultMassage not valid")
         return False
 
-    for s_ID, s_title, _ in result.entry:
+    for s_ID, s_title, *_ in result.entry:
         if s_title == title and s_ID != ID:
             log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "update_recipe_by_ID()",
                         f"recipe with title already exists -> {title}")
             return False
 
-    for s_ID, _, _ in result.entry:
+    for s_ID, _, *_ in result.entry:
         if s_ID == ID:
             return True
 
@@ -263,12 +273,17 @@ def check_update_recipe_by_ID(ID: int, title: str, description: str) -> bool:
     return False
 
 
-def check_update_recipe_by_title(old_title: str, new_title: str, description: str) -> bool:
+def check_update_recipe_by_title(old_title: str, new_title: str, description: str, standard_serving_count: int,
+                                 scale_serving_count: int) -> bool:
     if not v_h.is_valid_string(old_title):
         return False
     if not v_h.is_valid_string(new_title):
         return False
     if not v_h.is_valid_string(description):
+        return False
+    if not v_h.is_valid_ID(standard_serving_count):
+        return False
+    if not v_h.is_valid_ID(scale_serving_count):
         return False
 
     result = s.select.select_all_recipes()
@@ -277,13 +292,13 @@ def check_update_recipe_by_title(old_title: str, new_title: str, description: st
         return False
 
     if new_title != old_title:
-        for _, s_title, _ in result.entry:
+        for _, s_title, *_ in result.entry:
             if s_title == new_title:
                 log.message(log.LogType.INVALID_ARGUMENT, "v_database.py", "update_recipe_by_title()",
                             f"recipe with title already exists -> {new_title}")
                 return False
 
-    for _, s_title, _ in result.entry:
+    for _, s_title, *_ in result.entry:
         if s_title == old_title:
             return True
 
@@ -304,7 +319,7 @@ def check_delete_recipe_by_ID(ID: int) -> bool:
     if not result.valid:
         log.message(log.LogType.INFO, "v_database.py", "delete_recipe_by_ID()", "ResultMessage not valid")
 
-    for s_ID, _, _ in result.entry:
+    for s_ID, *_ in result.entry:
         if s_ID == ID:
             return True
 
@@ -322,7 +337,7 @@ def check_delete_recipe_by_title(title: str) -> bool:
     if not result.valid:
         log.message(log.LogType.INFO, "v_database.py", "delete_recipe_by_title()", "ResultMessage not valid")
 
-    for _, s_title, _ in result.entry:
+    for _, s_title, *_ in result.entry:
         if s_title == title:
             return True
 
@@ -347,7 +362,7 @@ def check_select_all_ingredients_from_recipe(recipe_ID: int) -> bool:
                     "ReturnMassage not valid")
         return False
 
-    for ID, _, _ in result.entry:
+    for ID, *_ in result.entry:
         if ID == recipe_ID:
             return True
 

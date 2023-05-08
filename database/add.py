@@ -38,14 +38,15 @@ class Add:
     # /raw type
 
     # recipe
-    def add_recipe(self, title: str, description: str) -> r_m.ReturnMessage:
+    def add_recipe(self, title: str, description: str, standard_serving_count: int,
+                   scale_serving_count: int) -> r_m.ReturnMessage:
         title, description = title.strip(), description.strip()
-        if not v_d.check_add_recipe(title, description):
+        if not v_d.check_add_recipe(title, description, standard_serving_count, scale_serving_count):
             return r_m.ReturnMessageStr("no valid argument to add recipe", False)
 
-        sql_command: str = f"""INSERT INTO recipes (title, description) VALUES (? ,?);"""
+        sql_command: str = f"""INSERT INTO recipes (title, description, standard_serving_count, scale_serving_count) VALUES (? ,?, ?, ?);"""
         try:
-            self.db.cursor.execute(sql_command, (title, description))
+            self.db.cursor.execute(sql_command, (title, description, standard_serving_count, scale_serving_count))
             self.db.connection.commit()
             log.message(log.LogType.SAVED, "add.py", "self.add_recipe()", f"add new recipe -> {title}")
             return r_m.ReturnMessageInt(self.db.cursor.lastrowid, True)

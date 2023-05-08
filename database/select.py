@@ -60,7 +60,7 @@ class Select:
     # /raw type
     # recipe
     def select_all_recipes(self) -> r_m.ReturnMessage:
-        sql_command: str = f"""SELECT ID, title, description FROM recipes ORDER BY title ASC;"""
+        sql_command: str = f"""SELECT ID, title, description, standard_serving_count, scale_serving_count FROM recipes ORDER BY title ASC;"""
         try:
             result: tuple = self.db.cursor.execute(sql_command).fetchall()
             log.message(log.LogType.LOADED, "select.py", "self.select_all_recipes()",
@@ -74,7 +74,7 @@ class Select:
         if not v_d.check_select_recipe_by_ID(ID):
             return r_m.ReturnMessageStr("no valid arguments for selecting recipe", False)
 
-        sql_command: str = f"""SELECT ID,title,description FROM recipes WHERE ID IS ?;"""
+        sql_command: str = f"""SELECT ID,title,description, standard_serving_count, scale_serving_count FROM recipes WHERE ID IS ?;"""
         try:
             result: tuple = self.db.cursor.execute(sql_command, (ID,)).fetchone()
             log.message(log.LogType.LOADED, "select.py", "self.select_recipe_by_ID()",
@@ -89,7 +89,7 @@ class Select:
         if not v_d.check_select_recipe_by_title(title):
             return r_m.ReturnMessageStr("no valid arguments for select recipe", False)
 
-        sql_command: str = f"""SELECT ID,title,description FROM recipes WHERE title IS ?;"""
+        sql_command: str = f"""SELECT ID,title,description, standard_serving_count, scale_serving_count FROM recipes WHERE title IS ?;"""
         try:
             result: tuple = self.db.cursor.execute(sql_command, (title,)).fetchone()
             log.message(log.LogType.LOADED, "select.py", "self.select_recipe_by_title()",
