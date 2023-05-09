@@ -69,11 +69,14 @@ class IngredientItem(QListWidgetItem):
 
 
 class RecipeItem(QListWidgetItem):
-    def __init__(self, ID: int, title: str, description: str) -> None:
+    def __init__(self, ID: int, title: str, description: str, standard_serving_count: int,
+                 scale_serving_count: int) -> None:
         super().__init__()
         self.ID: int = ID
         self.title: str = title
         self.description: str = description
+        self.standard_serving_count: int = standard_serving_count
+        self.scale_serving_count: int = scale_serving_count
 
         self.set_title(self.title)
 
@@ -303,7 +306,7 @@ class MainWindow(QMainWindow):
             self._display_message(result.entry)
             return
 
-        recipe: RecipeItem = RecipeItem(result.entry, new_name, "description")
+        recipe: RecipeItem = RecipeItem(result.entry, new_name, "description", 1, 1)
         self._recipes_list.addItem(recipe)
         self._recipes_list.setCurrentItem(recipe)
 
@@ -424,17 +427,18 @@ class MainWindow(QMainWindow):
             return
 
         self._recipes_list.clear()
-        for ID, title, description in result.entry:
+        for ID, title, description, standard_serving_count, scale_serving_count in result.entry:
             if not self._check_valid_filter_recipe(ID):
                 continue
-            recipe: RecipeItem = RecipeItem(ID, title, description)
+            recipe: RecipeItem = RecipeItem(ID, title, description, standard_serving_count, scale_serving_count)
             self._recipes_list.addItem(recipe)
 
-        if self._recipes_list.count() == 0 and len(self._recipe_filter_list) != 0:
+        if len(self._recipe_filter_list) != 0:
             self._display_message("no recipes left with this filter")
             self._recipe_filter_list = list()
             self._load_recipes()
-        else:
+
+        elif self._recipes_list.count() == 0:
             self._add_recipe()
 
     def _load_types(self, recipe: RecipeItem) -> None:

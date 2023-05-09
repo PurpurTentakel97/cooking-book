@@ -25,3 +25,12 @@ def create_window() -> None:
 def start_application() -> None:
     global app
     app.exec()
+
+
+def shut_down_application() -> None:
+    global app
+    global window
+    app.closeAllWindows()
+    app.closingDown()
+    app = None
+    window = None

@@ -10,7 +10,9 @@ from helper import log
 from helper import init
 from database import add as a
 from database import my_database as d
+from UI import MyUI
 
+# database
 # @formatter:off
 entries: dict = {
     "raw_types": [
@@ -98,3 +100,15 @@ def _add_types_to_database() -> None:
 def delete_temporary_database() -> None:
     d.database.drop_connection()
     d._uncreate_database()
+
+
+# UI
+def generate_main_window() -> None:
+    MyUI.create_application()
+    MyUI.create_window()
+    MyUI.start_application()
+
+
+def shut_down_UI() -> None:
+    MyUI.shut_down_application()
+
