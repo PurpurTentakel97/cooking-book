@@ -43,26 +43,40 @@ class RawTypeItem(QListWidgetItem):
 
 
 class IngredientItem(QListWidgetItem):
-    def __init__(self, ID: int, amount: str, unit: str, ingredient: str) -> None:
+    def __init__(self, ID: int, amount: str, scaled_amount: str, unit: str, ingredient: str) -> None:
         super().__init__()
 
         self.ID: int = ID
         self.amount: str = amount
+        self.scaled_amount: str = scaled_amount
         self.unit: str = unit
         self.ingredient: str = ingredient
 
         self._set_text()
 
     def _set_text(self) -> None:
-        text: str = f"{self.amount}"
-        if len(self.unit) != 0:
-            text += f" {self.unit}"
+        text: str = ""
+        unit: bool = len(self.unit) != 0
+        if self.amount == self.scaled_amount:
+            text += f"{self.amount}"
+            if unit:
+                text += f" {self.unit}"
+        else:
+            text += f"{self.scaled_amount}"
+            if unit:
+                text += f" {self.unit}"
+            text +=  f" ({self.amount}"
+            if unit:
+                text += f" {self.unit}"
+            text += ")"
+
         text += f"  {self.ingredient}"
 
         self.setText(text)
 
-    def update(self, amount: str, unit: str, ingredient: str) -> None:
+    def update(self, amount: str, scaled_amount: str, unit: str, ingredient: str) -> None:
         self.amount = amount
+        self.scaled_amount = scaled_amount
         self.unit = unit
         self.ingredient = ingredient
         self._set_text()
@@ -280,7 +294,7 @@ class MainWindow(QMainWindow):
     def _check_valid_recipe(self) -> None:
         count: int = self._recipes_list.count()
         if count <= 0:
-            self._add_recipe()
+            self._load_recipes()
         else:
             self._recipes_list.setCurrentRow(0)
 
@@ -340,7 +354,8 @@ class MainWindow(QMainWindow):
             self._display_message(result.entry)
             return
 
-        item: IngredientItem = IngredientItem(result.entry, amount, unit, ingredient)
+        scaled_amount: str = str(amount_f / current_recipe.standard_serving_count * current_recipe.scale_serving_count)
+        item: IngredientItem = IngredientItem(result.entry, amount, scaled_amount, unit, ingredient)
         self._ingredients_list.addItem(item)
         self._ingredients_list.sortItems()
 
@@ -368,6 +383,11 @@ class MainWindow(QMainWindow):
         amount: str = self._amount_le.text().strip()
         unit: str = self._unit_le.text().strip()
         ingredient: str = self._ingredient_le.text().strip()
+        current_recipe: RecipeItem = self._recipes_list.currentItem()
+
+        if not current_recipe:
+            self._display_message("no current recipe")
+            return
 
         try:
             amount_f: float = float(amount)
@@ -380,7 +400,8 @@ class MainWindow(QMainWindow):
             self._display_message(result.entry)
             return
 
-        ingredient_item.update(amount, unit, ingredient)
+        scaled_amount: str = str(amount_f / current_recipe.standard_serving_count * current_recipe.scale_serving_count)
+        ingredient_item.update(amount, scaled_amount, unit, ingredient)
         self._clear_cancel_ingredients()
 
     # delete
@@ -441,7 +462,7 @@ class MainWindow(QMainWindow):
             recipe: RecipeItem = RecipeItem(ID, title, description, standard_serving_count, scale_serving_count)
             self._recipes_list.addItem(recipe)
 
-        if len(self._recipe_filter_list) != 0:
+        if len(self._recipe_filter_list) != 0 and self._recipes_list.count() == 0:
             self._display_message("no recipes left with this filter")
             self._recipe_filter_list = list()
             self._load_recipes()
@@ -470,6 +491,10 @@ class MainWindow(QMainWindow):
 
     def _load_ingredients(self, recipe: RecipeItem) -> None:
         self._ingredients_list.clear()
+        current_recipe: RecipeItem = self._recipes_list.currentItem()
+        if not current_recipe:
+            self._display_message("no current recipe")
+            return
 
         result = s.select.select_all_ingredients_from_recipe(recipe.ID)
         if not result.valid:
@@ -477,8 +502,11 @@ class MainWindow(QMainWindow):
             return
 
         for ID, _, amount, unit, ingredient in result.entry:
+            amount: int
+            scaled_amount: str = str(
+                amount / current_recipe.standard_serving_count * current_recipe.scale_serving_count)
             amount: str = str(amount)
-            item: IngredientItem = IngredientItem(ID, amount, unit, ingredient)
+            item: IngredientItem = IngredientItem(ID, amount, scaled_amount, unit, ingredient)
             self._ingredients_list.addItem(item)
 
         self._clear_cancel_ingredients()
@@ -517,6 +545,7 @@ class MainWindow(QMainWindow):
             current_recipe.set_title(old_title)
             return
         self._recipes_list.sortItems()
+        self._scale_ingredients()
 
     def _clicked_save_description(self) -> None:
         current_recipe: RecipeItem = self._recipes_list.currentItem()
@@ -647,6 +676,25 @@ class MainWindow(QMainWindow):
         self._unit_le.setText(current_ingredient.unit)
         self._ingredient_le.setText(current_ingredient.ingredient)
         self._delete_ingredient_btn.setEnabled(True)
+
+    # scale
+    def _scale_ingredients(self) -> None:
+        current_recipe: RecipeItem = self._recipes_list.currentItem()
+        if not current_recipe:
+            self._display_message("no current recipe")
+            return
+
+        for i in range(self._ingredients_list.count()):
+            ingredient: IngredientItem = self._ingredients_list.item(i)
+            try:
+                amount: float = float(ingredient.amount)
+            except ValueError:
+                continue
+
+            scaled_amount: str = str(
+                amount / current_recipe.standard_serving_count * current_recipe.scale_serving_count)
+
+            ingredient.update(str(amount), scaled_amount, ingredient.unit, ingredient.ingredient)
 
     # raw type window
     def _set_raw_type_window(self) -> None:
