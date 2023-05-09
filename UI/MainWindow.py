@@ -7,7 +7,7 @@
 
 from PyQt5.QtWidgets import QMainWindow, QHBoxLayout, QVBoxLayout, QGridLayout, QWidget, QMessageBox, QFileDialog
 from PyQt5.QtWidgets import QLineEdit, QPushButton, QListWidget, QListWidgetItem, QTextEdit, QLabel
-from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtGui import QDoubleValidator, QIntValidator
 
 from UI.FilterRecipeWindow import FilterRecipeWindow
 from UI.RawTypesWindow import RawTypesWindow
@@ -130,8 +130,14 @@ class MainWindow(QMainWindow):
         self._types_label: QLabel = QLabel("types:")
         self._standard_count: QLineEdit = QLineEdit()
         self._standard_count.setPlaceholderText("base serving count")
+        self._standard_count.setValidator(QIntValidator())
+        self._standard_count.returnPressed.connect(self._clicked_save_title)
+        self._standard_count.textChanged.connect(self._chanced_title)
         self._scale_count: QLineEdit = QLineEdit()
         self._scale_count.setPlaceholderText("scale serving count")
+        self._scale_count.setValidator(QIntValidator())
+        self._scale_count.returnPressed.connect(self._clicked_save_title)
+        self._scale_count.textChanged.connect(self._chanced_title)
         self._types_search_le: QLineEdit = QLineEdit()
         self._types_search_le.setPlaceholderText("types search")
         self._types_search_le.textChanged.connect(self._chanced_text_type_search)
@@ -349,11 +355,13 @@ class MainWindow(QMainWindow):
             self._display_message("no selected recipe to update")
             return False
 
-        result = u.update.update_recipe_by_ID(current_recipe.ID, current_recipe.title, current_recipe.description)
+        result = u.update.update_recipe_by_ID(current_recipe.ID, current_recipe.title, current_recipe.description,
+                                              current_recipe.standard_serving_count, current_recipe.scale_serving_count)
         if not result.valid:
             self._display_message(result.entry)
             return False
 
+        self._chanced_title()
         return True
 
     def _update_ingredient(self, ingredient_item: IngredientItem) -> None:
@@ -497,11 +505,17 @@ class MainWindow(QMainWindow):
             return
 
         old_title: str = current_recipe.title
-        current_recipe.set_title(self._title_le.text())
+        current_recipe.set_title(self._title_le.text().strip())
+        try:
+            current_recipe.standard_serving_count = int(self._standard_count.text().strip())
+            current_recipe.scale_serving_count = int(self._scale_count.text().strip())
+        except ValueError:
+            self._display_message("no valid number in servings")
+            return
+
         if not self._update_recipe():
             current_recipe.set_title(old_title)
             return
-        self._save_title_btn.setEnabled(False)
         self._recipes_list.sortItems()
 
     def _clicked_save_description(self) -> None:
@@ -551,6 +565,8 @@ class MainWindow(QMainWindow):
         self._recipe_entry_te.setText(current_recipe.description)
         self._load_types(current_recipe)
         self._load_ingredients(current_recipe)
+        self._standard_count.setText(str(current_recipe.standard_serving_count))
+        self._scale_count.setText(str(current_recipe.scale_serving_count))
 
     def _chanced_recipe_search(self) -> None:
         current_text: str = self._recipe_search_le.text().strip()
@@ -563,12 +579,27 @@ class MainWindow(QMainWindow):
 
     def _chanced_title(self) -> None:
         current_text: str = self._title_le.text().strip()
+        current_standard_count: str = self._standard_count.text().strip()
+        current_scale_count: str = self._scale_count.text().strip()
+
+        try:
+            current_standard_count: int = int(current_standard_count)
+            current_scale_count: int = int(current_scale_count)
+        except ValueError:
+            self._save_title_btn.setEnabled(False)
+            return
+
         current_recipe: RecipeItem = self._recipes_list.currentItem()
         if not current_recipe:
             self._display_message("no selected recipe for title chance")
             return
 
-        self._save_title_btn.setEnabled(current_text != current_recipe.title and len(current_text) != 0)
+        has_entry: bool = len(current_text) != 0
+        has_different_entry: bool = current_text != current_recipe.title \
+                                    or current_standard_count != current_recipe.standard_serving_count \
+                                    or current_scale_count != current_recipe.scale_serving_count
+
+        self._save_title_btn.setEnabled(has_entry and has_different_entry)
 
     def _chanced_ingredient_le(self) -> None:
         amount: str = self._amount_le.text().strip()
