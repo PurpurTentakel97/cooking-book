@@ -14,6 +14,8 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table
 from helper import log
 from database import select as s
 
+import webbrowser
+
 _title: str | None = None
 
 
@@ -24,6 +26,8 @@ class RecipePDF:
         self.style_sheet = getSampleStyleSheet()
         self.custom_styles: dict = dict()
         self._add_styles()
+
+        self._last_export_path: str = str()
 
     def _add_styles(self) -> None:
         self.custom_styles['CustomTitle'] = (ParagraphStyle(name='CustomTitle', parent=self.style_sheet['Title'],
@@ -49,6 +53,13 @@ class RecipePDF:
         self.custom_styles['CustomCenterHeading3'] = (ParagraphStyle(name='CustomCenterHeading3',
                                                                      parent=self.style_sheet['Heading3'],
                                                                      alignment=TA_CENTER))
+
+    def open_last_export(self) -> bool:
+        if not self._last_export_path.strip():
+            return False
+
+        webbrowser.open_new(self._last_export_path)
+        return True
 
     def export(self, e_dir: str, file_name: str, ID: int) -> bool:
         self.dir_name = e_dir
@@ -148,7 +159,8 @@ class RecipePDF:
             return Paragraph(str("---" if not value else value), self.style_sheet["BodyText"])
 
     def _get_doc(self) -> SimpleDocTemplate:
-        return SimpleDocTemplate(f"{self.dir_name}/{self.file_name}", showBoundary=0, pagesize=A4, rightMargin=1.5 * cm,
+        self._last_export_path = f"{self.dir_name}/{self.file_name}"
+        return SimpleDocTemplate(self._last_export_path, showBoundary=0, pagesize=A4, rightMargin=1.5 * cm,
                                  leftMargin=1.5 * cm, topMargin=1.5 * cm, bottomMargin=1.5 * cm)
 
     def _export(self, doc: SimpleDocTemplate, elements: list, numbered: bool = True) -> bool:

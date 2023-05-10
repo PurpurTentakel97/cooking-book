@@ -55,6 +55,8 @@ def export_recipe(ID: int, my_path: str) -> bool:
     return _recipe_pdf.export(dirs.get_dir_from_file(dirs.FileType.EXPORT), file_name, ID)
 
 
-def open_pdf(my_path: str) -> bool:
-    print(f"TODO open pdf at -> {my_path}")
-    return False
+def open_pdf() -> bool:
+    if not _recipe_pdf:
+        return False
+
+    return _recipe_pdf.open_last_export()

@@ -753,7 +753,7 @@ class MainWindow(QMainWindow):
                                                          "The PDF can be open automatically after exorting it.")
 
         if should_open:
-            result = p_h.open_pdf(fileName)
+            result = p_h.open_pdf()
             if not result:
                 self._display_message("could not open pdf")
                 return
