@@ -65,7 +65,7 @@ class IngredientItem(QListWidgetItem):
             text += f"{self.scaled_amount}"
             if unit:
                 text += f" {self.unit}"
-            text +=  f" ({self.amount}"
+            text += f" ({self.amount}"
             if unit:
                 text += f" {self.unit}"
             text += ")"
@@ -578,11 +578,14 @@ class MainWindow(QMainWindow):
         self._types_list.clearSelection()
 
     def _clicked_accept_ingredient(self) -> None:
-        current_ingredient: IngredientItem = self._ingredients_list.currentItem()
+        current_ingredient: list = self._ingredients_list.selectedItems()
         if not current_ingredient:
             self._add_ingredient()
         else:
-            self._update_ingredient(current_ingredient)
+            self._update_ingredient(current_ingredient[0])
+
+        self._amount_le.setFocus()
+        self._ingredients_list.clearSelection()
 
     # chanced
     def _chanced_recipe(self) -> None:
@@ -734,8 +737,8 @@ class MainWindow(QMainWindow):
 
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self, "Save Recipe", dirs.get_dir_from_enum(dirs.DirType.EXPORT),
-                                                  "Text Files (*.pdf)", options=options)
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save Recipe", f"{dirs.get_dir_from_enum(dirs.DirType.EXPORT)}\\{current_recipe.title}.pdf",
+                                                  "PDF (*.pdf)", options=options)
 
         if not fileName:
             return

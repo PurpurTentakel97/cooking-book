@@ -87,12 +87,12 @@ class RawTypesWindow(QWidget):
         self._clear()
 
     def _accept_clicked(self) -> None:
-        current_item: RawTypeEntry = self._list.currentItem()
+        current_item: list = self._list.selectedItems()
         if not current_item:
             self._add_type(self._input.text())
             return
 
-        self._update_type(current_item.ID, self._input.text())
+        self._update_type(current_item[0].ID, self._input.text())
 
     def _delete_clicked(self) -> None:
         current_item: RawTypeEntry = self._list.currentItem()
