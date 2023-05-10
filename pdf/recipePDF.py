@@ -64,13 +64,13 @@ class RecipePDF:
         elements: list = list()
         elements.extend(self._get_headline(recipe_result.entry))
         elements.extend(self._get_tags(ID))
-        elements.extend(self._get_ingredients(ID))
+        elements.extend(self._get_ingredients(ID, self._get_scale_factor(recipe_result.entry)))
         elements.extend(self._get_description(recipe_result.entry))
 
         return self._export(doc=doc, elements=elements)
 
     def _get_headline(self, recipe_data: list) -> list:
-        _, title, _ = recipe_data
+        _, title, _, _, scale_serving_count = recipe_data
         elements: list = list()
 
         global _title
@@ -78,7 +78,7 @@ class RecipePDF:
 
         elements.append(Paragraph(title, self.custom_styles["CustomTitle"]))
         elements.append(
-            Paragraph("TODO: x portionen", self.custom_styles['CustomBodyTextCenter']))  # @todo export real count
+            Paragraph(f"{scale_serving_count} servings", self.custom_styles['CustomBodyTextCenter']))
         elements.append(Spacer(width=0, height=1 * cm))
 
         return elements
@@ -107,7 +107,7 @@ class RecipePDF:
         elements.append(Spacer(width=0, height=1 * cm))
         return elements
 
-    def _get_ingredients(self, ID: int) -> list:
+    def _get_ingredients(self, ID: int, scale_factor: float) -> list:
         ingredient_result = s.select.select_all_ingredients_from_recipe(ID)
         if not ingredient_result.valid:
             log.message(log.LogType.ERROR, "recipePDF.py", "self._get_ingredients()",
@@ -122,7 +122,7 @@ class RecipePDF:
         else:
             table_data: list = list()
             for _, _, amount, unit, ingredient in ingredient_result.entry:
-                table_data.append([f"{amount}{unit}", ingredient])
+                table_data.append([f"{amount * scale_factor} {unit}", ingredient])
             table = Table(table_data, hAlign='LEFT', rowHeights=0.5 * cm)
             elements.append(table)
 
@@ -130,7 +130,7 @@ class RecipePDF:
         return elements
 
     def _get_description(self, recipe_data: list) -> list:
-        _, _, description = recipe_data
+        _, _, description, *_ = recipe_data
         description: str
         description = description.replace("\n", "<br/>")
         elements: list = list()
@@ -165,6 +165,14 @@ class RecipePDF:
                         f"no premission to export PDF -> {self.dir_name}\\{self.file_name}")
             _title = None
             return False
+
+    @staticmethod
+    def _get_scale_factor(recipe_data: list) -> float:
+        if len(recipe_data) == 0:
+            return 1.0
+
+        _, _, _, standard, scale = recipe_data
+        return scale / standard
 
 
 class NumberedCanvas(canvas.Canvas):
